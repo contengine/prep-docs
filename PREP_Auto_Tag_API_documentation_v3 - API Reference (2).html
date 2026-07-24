@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PREP Auto Tag API Documentation</title>
+<meta name="description" content="Documentation for the PREP Auto Tag API">
+<style>
+/* ---------- Reset & base ---------- */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: #2b2b2b;
+  background: #fff;
+  font-size: 15px;
+  line-height: 1.6;
+}
+a { color: #147ffc; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre, kbd { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
+
+/* ---------- Layout shell ---------- */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 260px;
+  background: #1c1d21;
+  color: #b7b9c2;
+  overflow-y: auto;
+  padding-bottom: 40px;
+  z-index: 30;
+  border-right: 1px solid #000;
+}
+.sidebar::-webkit-scrollbar { width: 8px; }
+.sidebar::-webkit-scrollbar-thumb { background: #3a3b41; border-radius: 4px; }
+
+.brand {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid #2c2d33;
+}
+.brand .brand-name {
+  font-weight: 700;
+  color: #fff;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+.brand .brand-sub {
+  color: #7d7f89;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.search-wrap { padding: 14px 16px; border-bottom: 1px solid #2c2d33; }
+.search-wrap input {
+  width: 100%;
+  background: #26272d;
+  border: 1px solid #34353c;
+  color: #e6e6e6;
+  border-radius: 5px;
+  padding: 7px 10px;
+  font-size: 13px;
+}
+.search-wrap input:focus { outline: none; border-color: #147ffc; }
+.search-wrap input::placeholder { color: #75757f; }
+
+nav#toc { padding: 8px 0 20px; }
+nav#toc ul { list-style: none; margin: 0; padding: 0; }
+nav#toc .toc-h1 > a {
+  display: block;
+  color: #d8d9de;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 9px 20px;
+}
+nav#toc .toc-h2 a {
+  display: block;
+  color: #9799a3;
+  font-weight: 400;
+  font-size: 12.5px;
+  padding: 7px 20px 7px 32px;
+  word-break: break-all;
+}
+nav#toc a:hover { background: #26272d; color: #fff; text-decoration: none; }
+nav#toc a.active {
+  background: #147ffc;
+  color: #fff !important;
+}
+nav#toc ul.toc-list-h2 { display: none; }
+nav#toc li.open > ul.toc-list-h2,
+nav#toc li.has-active > ul.toc-list-h2 { display: block; }
+
+/* language tab switcher, fixed top-right */
+.lang-toggle {
+  position: fixed;
+  top: 0; right: 0;
+  z-index: 40;
+  background: #101114;
+  display: flex;
+  border-bottom-left-radius: 8px;
+  box-shadow: -2px 2px 10px rgba(0,0,0,0.25);
+}
+.lang-toggle button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: #797a83;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+.lang-toggle button.active {
+  color: #fff;
+  border-bottom-color: #147ffc;
+}
+
+/* main content grid */
+.main {
+  margin-left: 260px;
+  padding-top: 46px; /* room for the fixed lang toggle */
+}
+
+.doc-section {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid #ececec;
+}
+.doc-section:last-child { border-bottom: none; }
+
+.text-col {
+  width: 55%;
+  padding: 34px 44px;
+  min-width: 0;
+}
+.code-col {
+  width: 45%;
+  background: #1c1d21;
+  padding: 34px 34px;
+  min-width: 0;
+}
+
+.text-col h1 {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0 0 16px;
+  color: #101114;
+  scroll-margin-top: 56px;
+}
+.text-col h2 {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0 0 14px;
+  color: #101114;
+  scroll-margin-top: 56px;
+}
+.text-col h3 {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6c6e79;
+  margin: 26px 0 10px;
+}
+.text-col p { margin: 0 0 14px; color: #3c3d44; }
+.text-col ul { margin: 0 0 14px; padding-left: 22px; color: #3c3d44; }
+.text-col li { margin-bottom: 6px; }
+.text-col code {
+  background: #f1f2f5;
+  color: #c0341d;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+.text-col table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 18px;
+  font-size: 13.5px;
+}
+.text-col table th {
+  text-align: left;
+  background: #f6f7f9;
+  color: #101114;
+  font-weight: 700;
+  padding: 9px 12px;
+  border-bottom: 2px solid #e2e3e8;
+}
+.text-col table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #ececee;
+  vertical-align: top;
+  color: #3c3d44;
+}
+.text-col table code { white-space: normal; word-break: break-all; }
+
+.text-col aside {
+  background: #eef6ff;
+  border-left: 4px solid #147ffc;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 13.5px;
+  color: #1c3f66;
+  margin: 0 0 16px;
+}
+.text-col aside.warning {
+  background: #fff3ea;
+  border-left-color: #e8792e;
+  color: #6b3d13;
+}
+.text-col blockquote {
+  margin: 0 0 12px;
+  padding: 0;
+  font-size: 13px;
+  color: #8b8d97;
+  font-style: italic;
+}
+.text-col blockquote p { margin: 0 0 6px; color: #8b8d97; }
+.text-col img {
+  max-width: 100%;
+  border: 1px solid #e6e6ea;
+  border-radius: 6px;
+  display: block;
+  margin: 10px auto;
+}
+
+/* code column blocks */
+.code-col, .code-col p, .code-col span:not([class]) {
+  color: #d7d8dd;
+}
+.code-col h3.col-label {
+  color: #9799a3;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 22px 0 10px;
+}
+.code-col .callout {
+  color: #8b8d97;
+  font-size: 12.5px;
+  font-style: italic;
+  margin: 0 0 10px;
+}
+.code-block {
+  display: none;
+  position: relative;
+  background: #16171a;
+  border-radius: 6px;
+  margin: 0 0 20px;
+  overflow: auto;
+}
+.code-block.active { display: block; }
+.code-block.always { display: block; }
+.code-block pre {
+  margin: 0;
+  padding: 16px 18px;
+  font-size: 12.5px;
+  overflow-x: auto;
+  white-space: pre;
+  color: #e6e6e6;
+}
+.code-block .copy-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: #24252b;
+  border: 1px solid #34353c;
+  color: #9799a3;
+  font-size: 11px;
+  padding: 4px 9px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.code-block .copy-btn:hover { color: #fff; border-color: #147ffc; }
+.code-block .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
+
+.code-col figure.result-image {
+  margin: 0 0 20px;
+  text-align: center;
+}
+.code-col figure.result-image img {
+  max-width: 100%;
+  border-radius: 6px;
+  border: 1px solid #2c2d33;
+}
+.code-col figure.result-image figcaption {
+  color: #8b8d97;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+/* nav-button for mobile */
+#nav-button {
+  display: none;
+  position: fixed; top: 10px; left: 10px; z-index: 50;
+  background: #147ffc; color: #fff; padding: 8px 12px;
+  border-radius: 5px; font-size: 12px; font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .doc-section { flex-direction: column; }
+  .text-col, .code-col { width: 100%; }
+  .sidebar { transform: translateX(-100%); transition: transform .2s ease; }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  #nav-button { display: block; }
+  .lang-toggle { border-bottom-left-radius: 0; }
+}
+
+
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight .gh {
+  color: #999999;
+}
+.highlight .sr {
+  color: #f6aa11;
+}
+.highlight .go {
+  color: #888888;
+}
+.highlight .gp {
+  color: #555555;
+}
+.highlight .gs {
+}
+.highlight .gu {
+  color: #aaaaaa;
+}
+.highlight .nb {
+  color: #f6aa11;
+}
+.highlight .cm {
+  color: #75715e;
+}
+.highlight .cp {
+  color: #75715e;
+}
+.highlight .c1 {
+  color: #75715e;
+}
+.highlight .cs {
+  color: #75715e;
+}
+.highlight .c, .highlight .ch, .highlight .cd, .highlight .cpf {
+  color: #75715e;
+}
+.highlight .err {
+  color: #960050;
+}
+.highlight .gr {
+  color: #960050;
+}
+.highlight .gt {
+  color: #960050;
+}
+.highlight .gd {
+  color: #49483e;
+}
+.highlight .gi {
+  color: #49483e;
+}
+.highlight .ge {
+  color: #49483e;
+}
+.highlight .kc {
+  color: #66d9ef;
+}
+.highlight .kd {
+  color: #66d9ef;
+}
+.highlight .kr {
+  color: #66d9ef;
+}
+.highlight .no {
+  color: #66d9ef;
+}
+.highlight .kt {
+  color: #66d9ef;
+}
+.highlight .mf {
+  color: #ae81ff;
+}
+.highlight .mh {
+  color: #ae81ff;
+}
+.highlight .il {
+  color: #ae81ff;
+}
+.highlight .mi {
+  color: #ae81ff;
+}
+.highlight .mo {
+  color: #ae81ff;
+}
+.highlight .m, .highlight .mb, .highlight .mx {
+  color: #ae81ff;
+}
+.highlight .sc {
+  color: #ae81ff;
+}
+.highlight .se {
+  color: #ae81ff;
+}
+.highlight .ss {
+  color: #ae81ff;
+}
+.highlight .sd {
+  color: #e6db74;
+}
+.highlight .s2 {
+  color: #e6db74;
+}
+.highlight .sb {
+  color: #e6db74;
+}
+.highlight .sh {
+  color: #e6db74;
+}
+.highlight .si {
+  color: #e6db74;
+}
+.highlight .sx {
+  color: #e6db74;
+}
+.highlight .s1 {
+  color: #e6db74;
+}
+.highlight .s, .highlight .sa, .highlight .dl {
+  color: #e6db74;
+}
+.highlight .na {
+  color: #a6e22e;
+}
+.highlight .nc {
+  color: #a6e22e;
+}
+.highlight .nd {
+  color: #a6e22e;
+}
+.highlight .ne {
+  color: #a6e22e;
+}
+.highlight .nf, .highlight .fm {
+  color: #a6e22e;
+}
+.highlight .vc {
+  color: #ffffff;
+}
+.highlight .nn {
+  color: #ffffff;
+}
+.highlight .ni {
+  color: #ffffff;
+}
+.highlight .bp {
+  color: #ffffff;
+}
+.highlight .vg {
+  color: #ffffff;
+}
+.highlight .vi {
+  color: #ffffff;
+}
+.highlight .nv, .highlight .vm {
+  color: #ffffff;
+}
+.highlight .w {
+  color: #ffffff;
+}
+.highlight {
+  color: #ffffff;
+}
+.highlight .n, .highlight .py, .highlight .nx {
+  color: #ffffff;
+}
+.highlight .nl {
+  color: #f92672;
+}
+.highlight .ow {
+  color: #f92672;
+}
+.highlight .nt {
+  color: #f92672;
+}
+.highlight .k, .highlight .kv {
+  color: #f92672;
+}
+.highlight .kn {
+  color: #f92672;
+}
+.highlight .kp {
+  color: #f92672;
+}
+.highlight .o {
+  color: #f92672;
+}
+    
+</style>
+</head>
+<body>
+
+<a href="#" id="nav-button" onclick="toggleNav(); return false;">NAV</a>
+
+<div class="lang-toggle">
+  <button class="active" data-lang="shell" onclick="setLang('shell')">cURL</button>
+  <button data-lang="python" onclick="setLang('python')">python</button>
+</div>
+
+<div class="sidebar">
+  <div class="brand">
+    <div class="brand-name">PREP &middot; Auto Tag API</div>
+    <div class="brand-sub">API Reference &middot; v3</div>
+  </div>
+  <div class="search-wrap">
+    <input type="text" placeholder="Search" oninput="filterNav(this.value)">
+  </div>
+  <nav id="toc">
+    <ul id="toc-list"><li class="toc-h1"><a href="#introduction-and-overview" class="toc-link" data-target="introduction-and-overview">1. Introduction and Overview</a></li><li class="toc-h1"><a href="#api-idkey-setup" class="toc-link" data-target="api-idkey-setup">2. API ID/KEY setup</a></li><li class="toc-h1"><a href="#api-specs" class="toc-link" data-target="api-specs">3. API Specs</a><ul class="toc-list-h2"><li class="toc-h2"><a href="#auto-tag-api" class="toc-link" data-target="auto-tag-api">3.1 Auto tag API</a></li><li class="toc-h2"><a href="#upload-file" class="toc-link" data-target="upload-file">3.2 Upload file</a></li><li class="toc-h2"><a href="#auto-tag-file-status-api" class="toc-link" data-target="auto-tag-file-status-api">3.3 Auto tag file status API</a></li><li class="toc-h2"><a href="#auto-tag-batch-status-api" class="toc-link" data-target="auto-tag-batch-status-api">3.4 Auto tag batch status API</a></li></ul></li><li class="toc-h1"><a href="#error-codes" class="toc-link" data-target="error-codes">4. Error Codes</a></li><li class="toc-h1"><a href="#templates-api" class="toc-link" data-target="templates-api">5. Templates API</a></li><li class="toc-h1"><a href="#rate-limits" class="toc-link" data-target="rate-limits">6. Rate Limits</a></li><li class="toc-h1"><a href="#libraries-dependencies" class="toc-link" data-target="libraries-dependencies">7. Libraries (Dependencies)</a></li><li class="toc-h1"><a href="#versioning-updates" class="toc-link" data-target="versioning-updates">8. Versioning & updates</a></li><li class="toc-h1"><a href="#support" class="toc-link" data-target="support">9. Support</a></li></ul>
+  </nav>
+</div>
+
+<main class="main">
+<section class="doc-section" id="introduction-and-overview">
+  <div class="text-col">
+    <h1 id="introduction-and-overview">1. Introduction and Overview</h1>
+<p>This document explains the specifications of the Auto Tag API in PREP.</p>
+<p>Auto-tagging a PDF document is a three-step process:</p>
+<ul>
+<li>Request an upload URL (Initiate upload for Auto Tag)</li>
+<li>Upload the file for auto-tagging</li>
+<li>Poll for processing status</li>
+</ul>
+<p>The Auto-tag API exposes three RESTful endpoints:</p>
+<ul>
+<li><strong>POST v3/process/init-auto-tag/</strong> &mdash; Starts the auto-tagging workflow for a PDF file. This call kicks off the auto-tagging process and returns a unique, signed URL that the file will be uploaded to in the next step.</li>
+<li><strong>POST</strong> <code>https://static-storage-bucket.s3.amazonaws.com/&hellip;/signed_url/</code> &mdash; Uploads the file to Static Storage. Post the file directly to the signed URL returned above.</li>
+<li><strong>POST process/ping/</strong> &mdash; Checks the status of the auto-tagging job and returns the download link once ready.</li>
+</ul>
+  </div>
+  <div class="code-col"><p class="callout">Signed upload URL example</p><div class="code-block lang-shell active  always">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code>https://static-storage-bucket.s3.amazonaws.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321</code></pre>
+</div></div>
+</section>
+<section class="doc-section" id="api-idkey-setup">
+  <div class="text-col">
+    <h1 id="api-idkey-setup">2. API ID/KEY setup</h1>
+<p>The API key will be sent in email.</p>
+<aside>Every request must include your <code>api-id</code> and <code>app-key</code> headers &mdash; requests without them are rejected.</aside>
+  </div>
+  <div class="code-col"></div>
+</section>
+<section class="doc-section" id="api-specs">
+  <div class="text-col">
+    <h1 id="api-specs">3. API Specs</h1>
+<p><strong>Base URL:</strong> <code>https://ingprfl.continualengine.com/v3/</code></p>
+  </div>
+  <div class="code-col"></div>
+</section>
+<section class="doc-section" id="auto-tag-api">
+  <div class="text-col">
+    <h2 id="auto-tag-api">3.1 Auto tag API</h2>
+<h3>3.1.1 Initiate upload for Auto Tag</h3>
+<blockquote><p>POST file to auto tag API</p></blockquote>
+<h3>Payload</h3>
+<table><thead>
+<tr><th>Key</th><th>Value type</th></tr>
+</thead><tbody>
+<tr><td>file_name</td><td>string</td></tr>
+<tr><td>template_id <em>(optional)</em></td><td>integer &mdash; id of the template</td></tr>
+</tbody></table>
+<h3>Response</h3>
+<table><thead>
+<tr><th>Response JSON</th><th>Status code</th></tr>
+</thead><tbody>
+<tr><td><code>{"status": "success", "upload_id": "&hellip;", "filename": "sample.pdf"}</code></td><td>201</td></tr>
+</tbody></table>
+  </div>
+  <div class="code-col"><div class="code-block lang-python">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://ingprfl.continualengine.com/v3/process/init-auto-tag/"</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{"filename": "sample.pdf"}</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s">'api-id'</span><span class="p">:</span> <span class="s">'prepuser_sample_id'</span><span class="p">,</span>
+  <span class="s">'app-key'</span><span class="p">:</span> <span class="s">'ER31DE423hRlp37Dn8sD'</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">"POST"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">text</span><span class="p">)</span></code></pre>
+</div><div class="code-block lang-shell active">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code>curl <span class="nt">--location</span> <span class="s1">'https://ingprfl.continualengine.com/v3/process/init-auto-tag/'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
+<span class="nt">--data</span> <span class="s1">'{"file_name": "sample.pdf"}'</span></code></pre>
+</div><h3 class="col-label">Example response</h3><div class="code-block lang-json  always">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code><span class="p">{</span>
+  <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
+  <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"80193b9e-b456-4d68-b99b-0cd5360655fa"</span><span class="p">,</span>
+  <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample.pdf"</span>
+<span class="p">}</span>  <span class="c1">// 201</span></code></pre>
+</div><figure class="result-image">
+  <img src="./Images/init-auto-tag-postman.png" alt="Initiate upload &amp;mdash; Postman example">
+  <figcaption>Initiate upload &mdash; Postman example</figcaption>
+</figure></div>
+</section>
+<section class="doc-section" id="upload-file">
+  <div class="text-col">
+    <h2 id="upload-file">3.2 Upload file</h2>
+<h3>3.2.1 Upload file to process</h3>
+<blockquote><p>PUT the file directly to the signed Static Storage URL returned in step 3.1.</p></blockquote>
+<aside class="warning">This request goes straight to <code>static-storage-bucket.s3.amazonaws.com</code>, not to the PREP API host &mdash; do not add your <code>api-id</code>/<code>app-key</code> headers here.</aside>
+  </div>
+  <div class="code-col"><div class="code-block lang-shell active  always">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code>curl <span class="s1">'https://static-storage-bucket.s3.amazonaws.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321'</span> <span class="se">\</span>
+<span class="nt">-X</span> <span class="s1">'PUT'</span> <span class="se">\</span>
+<span class="nt">-H</span> <span class="s1">'Referer: https://console.prep.continualengine.com/'</span> <span class="se">\</span>
+<span class="nt">-H</span> <span class="s1">'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36'</span> <span class="se">\</span>
+<span class="nt">-H</span> <span class="s1">'Accept: application/json, text/plain, */*'</span> <span class="se">\</span>
+<span class="nt">-H</span> <span class="s1">'sec-ch-ua: "Not;A=Brand";v="8", "Chromium";v="150", "Google Chrome";v="150"'</span> <span class="se">\</span>
+<span class="nt">-H</span> <span class="s1">'Content-Type: application/pdf; charset=utf-8'</span> <span class="se">\</span>
+<span class="nt">-H</span> <span class="s1">'sec-ch-ua-mobile: ?0'</span></code></pre>
+</div></div>
+</section>
+<section class="doc-section" id="auto-tag-file-status-api">
+  <div class="text-col">
+    <h2 id="auto-tag-file-status-api">3.3 Auto tag file status API</h2>
+<h3>3.3.1 Fetch processing status</h3>
+<blockquote><p>POST the <code>processId</code> to get the status and download URL of the auto-tagged file.</p></blockquote>
+<h3>Payload</h3>
+<table><thead>
+<tr><th>Key</th><th>Value type</th></tr>
+</thead><tbody>
+<tr><td>processId</td><td>String (alphanumeric) or integer<br>e.g. <code>80193b9e-b456-4d68-b99b-0cd5360655fa</code></td></tr>
+</tbody></table>
+<h3>Response</h3>
+<table><thead>
+<tr><th>Status of autotag</th><th>Status code</th></tr>
+</thead><tbody>
+<tr><td>In Progress</td><td>200</td></tr>
+<tr><td>Completed</td><td>200</td></tr>
+<tr><td>Failed</td><td>417</td></tr>
+</tbody></table>
+  </div>
+  <div class="code-col"><div class="code-block lang-python">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://ingprfl.continualengine.com/v3/process/ping/"</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="s">"{\"processId\": 157303yTsd2}"</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s">'api-id'</span><span class="p">:</span> <span class="s">'prepuser_sample_id'</span><span class="p">,</span>
+  <span class="s">'app-key'</span><span class="p">:</span> <span class="s">'ER31DE423hRlp37Dn8sD'</span><span class="p">,</span>
+  <span class="s">'Content-Type'</span><span class="p">:</span> <span class="s">'application/json'</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">"POST"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">text</span><span class="p">)</span></code></pre>
+</div><div class="code-block lang-shell active">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code>curl <span class="nt">--location</span> <span class="s1">'https://ingprfl.continualengine.com/v3/process/ping/'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
+<span class="nt">--data</span> <span class="s1">'{"processId": "80193b9e-b456-4d68-b99b-0cd5360655fa"}'</span></code></pre>
+</div><h3 class="col-label">Example responses</h3><div class="code-block lang-json  always">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code><span class="c1">// in progress &mdash; 200</span>
+<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"in-progress"</span><span class="p">,</span> <span class="nl">"value"</span><span class="p">:</span> <span class="s2">"35%"</span> <span class="p">}</span>
+
+<span class="c1">// completed &mdash; 200</span>
+<span class="p">{</span>
+  <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
+  <span class="nl">"url"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample.pdf?sign=&hellip;"</span>
+<span class="p">}</span>
+
+<span class="c1">// failed &mdash; 417</span>
+<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"Internal error."</span> <span class="p">}</span></code></pre>
+</div><figure class="result-image">
+  <img src="./Images/ping-status-postman.png" alt="Fetch processing status &amp;mdash; Postman example">
+  <figcaption>Fetch processing status &mdash; Postman example</figcaption>
+</figure></div>
+</section>
+<section class="doc-section" id="auto-tag-batch-status-api">
+  <div class="text-col">
+    <h2 id="auto-tag-batch-status-api">3.4 Auto tag batch status API</h2>
+<p>Use the same <code>process/ping/</code> pattern with a batch identifier to poll the status of a batch of documents submitted together.</p>
+  </div>
+  <div class="code-col"><figure class="result-image">
+  <img src="./Images/batch-status-postman.png" alt="Auto tag batch status &amp;mdash; Postman example">
+  <figcaption>Auto tag batch status &mdash; Postman example</figcaption>
+</figure></div>
+</section>
+<section class="doc-section" id="error-codes">
+  <div class="text-col">
+    <h1 id="error-codes">4. Error Codes</h1>
+<p>PREP can respond with errors with the below codes.</p>
+<table><thead>
+<tr><th>Error</th><th>Status code</th></tr>
+</thead><tbody>
+<tr><td>Resource exhausted</td><td>429</td></tr>
+<tr><td>Forbidden</td><td>403</td></tr>
+<tr><td>Bad Request</td><td>400</td></tr>
+<tr><td>Internal error</td><td>500</td></tr>
+</tbody></table>
+  </div>
+  <div class="code-col"><div class="code-block lang-json  always always">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code><span class="c1">// Resource exhausted &mdash; 429</span>
+<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"Either out of resource quota or reaching rate limiting"</span> <span class="p">}</span>
+
+<span class="c1">// Forbidden &mdash; 403</span>
+<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"Forbidden"</span> <span class="p">}</span>
+
+<span class="c1">// Bad Request &mdash; 400</span>
+<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"Invalid argument"</span> <span class="p">}</span>
+
+<span class="c1">// Internal error &mdash; 500</span>
+<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"Internal error."</span> <span class="p">}</span></code></pre>
+</div></div>
+</section>
+<section class="doc-section" id="templates-api">
+  <div class="text-col">
+    <h1 id="templates-api">5. Templates API</h1>
+<h2 id="templates-api-python">5.1 Get available templates</h2>
+<blockquote><p>Returns the templates that are available for the user.</p></blockquote>
+  </div>
+  <div class="code-col"><div class="code-block lang-python">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://ingprfl.continualengine.com/v3/accounts/templates/"</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s">'api-id'</span><span class="p">:</span> <span class="s">'prepuser_sample_id'</span><span class="p">,</span>
+  <span class="s">'app-key'</span><span class="p">:</span> <span class="s">'al31sp423halp37fn8saf'</span><span class="p">,</span>
+  <span class="s">'Content-Type'</span><span class="p">:</span> <span class="s">'application/json'</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">text</span><span class="p">)</span></code></pre>
+</div><div class="code-block lang-shell active">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code>curl <span class="nt">--location</span> <span class="s1">'https://ingprfl.continualengine.com/v3/accounts/templates/'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'api-id: prepuser_sample_id'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'app-key: al31sp423halp37fn8saf'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span></code></pre>
+</div><h3 class="col-label">Example response</h3><div class="code-block lang-json  always">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code><span class="c1">// 200</span>
+<span class="p">{</span> <span class="nl">"id"</span><span class="p">:</span> <span class="mi">323</span><span class="p">,</span> <span class="nl">"name"</span><span class="p">:</span> <span class="s2">"factsheet"</span> <span class="p">}</span>
+
+<span class="c1">// 417</span>
+<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"Internal error."</span> <span class="p">}</span></code></pre>
+</div></div>
+</section>
+<section class="doc-section" id="rate-limits">
+  <div class="text-col">
+    <h1 id="rate-limits">6. Rate Limits</h1>
+<ul>
+<li>No. of Auto tag API calls &mdash; 50</li>
+<li>No. of templatized documents &mdash; 50 (with alt text for 25 images)</li>
+<li>No. of documents that can be uploaded by a user &mdash; 15</li>
+<li>No. of image GPT API calls &mdash; 15 per user</li>
+</ul>
+  </div>
+  <div class="code-col"></div>
+</section>
+<section class="doc-section" id="libraries-dependencies">
+  <div class="text-col">
+    <h1 id="libraries-dependencies">7. Libraries (Dependencies)</h1>
+<p>Whether you're using Python, JavaScript, Java, Ruby, or any other language, you can integrate with our API using the standard HTTP POST method.</p>
+  </div>
+  <div class="code-col"></div>
+</section>
+<section class="doc-section" id="versioning-updates">
+  <div class="text-col">
+    <h1 id="versioning-updates">8. Versioning &amp; updates</h1>
+<p>We use Semantic Versioning (SemVer) for our API. Versions are numbered as <em>major.minor.patch</em>. Breaking changes will increment the major version, while new features and improvements will be reflected in the minor version. Bug fixes will trigger a change in the patch version.</p>
+  </div>
+  <div class="code-col"></div>
+</section>
+<section class="doc-section" id="support">
+  <div class="text-col">
+    <h1 id="support">9. Support</h1>
+<p>You can reach out to the below contacts in case you have questions.</p>
+<ul>
+<li><a href="mailto:shubham.doval@continualengine.com">shubham.doval@continualengine.com</a></li>
+<li><a href="mailto:support@continualengine.com">support@continualengine.com</a></li>
+</ul>
+  </div>
+  <div class="code-col"></div>
+</section>
+</main>
+
+<script>
+
+function copyCode(btn) {
+  const pre = btn.parentElement.querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const old = btn.textContent;
+    btn.textContent = 'Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = old; btn.classList.remove('copied'); }, 1400);
+  });
+}
+
+function setLang(lang) {
+  document.querySelectorAll('.lang-toggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+  document.querySelectorAll('.code-block').forEach(el => {
+    if (el.classList.contains('always')) return;
+    el.classList.toggle('active', el.classList.contains('lang-' + lang));
+  });
+}
+
+function toggleNav() {
+  document.querySelector('.sidebar').classList.toggle('open');
+}
+
+function filterNav(q) {
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('#toc-list > li').forEach(li => {
+    const text = li.textContent.toLowerCase();
+    li.style.display = (!q || text.includes(q)) ? '' : 'none';
+  });
+}
+
+// scrollspy
+document.addEventListener('DOMContentLoaded', () => {
+  const links = Array.from(document.querySelectorAll('.toc-link'));
+  const targets = links.map(l => document.getElementById(l.dataset.target)).filter(Boolean);
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const link = links.find(l => l.dataset.target === entry.target.id);
+      if (!link) return;
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        document.querySelectorAll('nav#toc li.toc-h1').forEach(li => li.classList.remove('has-active'));
+        const ownLi = link.closest('li.toc-h1');
+        if (ownLi) ownLi.classList.add('has-active');
+        const asParent = link.closest('li.toc-h2');
+        if (asParent) {
+          const grandParent = asParent.closest('li.toc-h1');
+          if (grandParent) grandParent.classList.add('has-active');
+        }
+      }
+    });
+  }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+  targets.forEach(t => io.observe(t));
+});
+
+</script>
+</body>
+</html>
