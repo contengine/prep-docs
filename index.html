@@ -195,6 +195,22 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   color: #3c3d44;
 }
 .text-col table code { white-space: normal; word-break: break-all; }
+.text-col table pre {
+  margin: 0;
+  padding: 10px 12px;
+  background: #f6f7f9;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #3c3d44;
+}
+.text-col table pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
 
 .text-col aside {
   background: #eef6ff;
@@ -642,20 +658,20 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <div class="text-col">
     <h2 id="auto-tag-file-status-api">3.3 Auto tag file status API</h2>
 <h3>3.3.1 Fetch processing status</h3>
-<blockquote><p>POST the <code>processId</code> to get the status and download URL of the auto-tagged file.</p></blockquote>
+<blockquote><p>POST the <code>uploadId</code> to get the status and download URL of the auto-tagged file.</p></blockquote>
 <h3>Payload</h3>
 <table><thead>
 <tr><th>Key</th><th>Value type</th></tr>
 </thead><tbody>
-<tr><td>processId</td><td>String (alphanumeric) or integer<br>e.g. <code>80193b9e-b456-4d68-b99b-0cd5360655fa</code></td></tr>
+<tr><td>uploadId</td><td>String (alphanumeric) or integer<br>e.g. <code>80193b9e-b456-4d68-b99b-0cd5360655fa</code></td></tr>
 </tbody></table>
 <h3>Response</h3>
 <table><thead>
-<tr><th>Status of autotag</th><th>Status code</th></tr>
+<tr><th>Status of autotag</th><th>Response JSON</th><th>Status code</th></tr>
 </thead><tbody>
-<tr><td>In Progress</td><td>200</td></tr>
-<tr><td>Completed</td><td>200</td></tr>
-<tr><td>Failed</td><td>417</td></tr>
+<tr><td>In Progress</td><td><code>{"status": "in-progress", "value": "35%"}</code></td><td>200</td></tr>
+<tr><td>Completed</td><td><code>{"status": "completed", "url": "https://staticstorage.continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"}</code></td><td>200</td></tr>
+<tr><td>Failed</td><td><code>{"status": "failed", "error": "Internal error."}</code></td><td>417</td></tr>
 </tbody></table>
   </div>
   <div class="code-col"><div class="section-heading">3.3 Auto tag file status API</div><h3 class="col-label">Request</h3><div class="code-block lang-python">
@@ -665,7 +681,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 
 <span class="n">url</span> <span class="o">=</span> <span class="s">"https://ingprfl.continualengine.com/v3/process/ping/"</span>
 
-<span class="n">payload</span> <span class="o">=</span> <span class="s">"{\"processId\": 157303yTsd2}"</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="s">"{\"uploadId\": 157303yTsd2}"</span>
 
 <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
   <span class="s">'api-id'</span><span class="p">:</span> <span class="s">'prepuser_sample_id'</span><span class="p">,</span>
@@ -682,7 +698,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'api-id: prepuser_sample_id'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'app-key: ER31DE423hRlp37Dn8sD'</span> <span class="se">\</span>
-<span class="nt">--data</span> <span class="s1">'{"processId": "80193b9e-b456-4d68-b99b-0cd5360655fa"}'</span></code></pre>
+<span class="nt">--data</span> <span class="s1">'{"uploadId": "80193b9e-b456-4d68-b99b-0cd5360655fa"}'</span></code></pre>
 </div><h3 class="col-label">Response</h3><div class="code-block lang-json  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="c1">// in progress &mdash; 200</span>
@@ -691,7 +707,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <span class="c1">// completed &mdash; 200</span>
 <span class="p">{</span>
   <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
-  <span class="nl">"url"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample.pdf?sign=&hellip;"</span>
+  <span class="nl">"url"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span>
 <span class="p">}</span>
 
 <span class="c1">// failed &mdash; 417</span>
@@ -717,7 +733,33 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   {"file_name": "sample5.pdf"}
 ]</code></pre>
 <h3>Response for batch upload</h3>
-<p>The response is an array with one entry per file &mdash; each carries its own <code>upload_id</code> plus a shared <code>batch_id</code> for polling status later.</p>
+<p>Response for an auto tag batch initiation is an array of objects, one per file, each with the structure below:</p>
+<pre><code>{
+  "status": "success",
+  "upload_id": "51debdae-88a8-4138-a954-42c7f1dd7ff2",
+  "filename": "sample1.pdf",
+  "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d"
+}</code></pre>
+<table><thead>
+<tr><th>Response JSON</th><th>Status code</th></tr>
+</thead><tbody>
+<tr><td><pre><code>[
+  {
+    "status": "success",
+    "upload_id": "51debdae-88a8-4138-a954-42c7f1dd7ff2",
+    "filename": "sample1.pdf",
+    "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d"
+  },
+  {
+    "status": "success",
+    "upload_id": "95199cf7-94a1-4b8b-b1c3-6aa545cef694",
+    "filename": "sample2.pdf",
+    "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d"
+  },
+  ........,
+  ........,
+]</code></pre></td><td>201</td></tr>
+</tbody></table>
   </div>
   <div class="code-col"><div class="section-heading">3.4 Auto tag batch API</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
@@ -775,15 +817,29 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <div class="text-col">
     <h2 id="auto-tag-batch-status-api">3.5 Auto tag batch status API</h2>
 <h3>3.5.1 Batch processing status</h3>
-<blockquote><p>POST the <code>batchID</code> from the batch upload response to check the status of every file in that batch.</p></blockquote>
+<blockquote><p>POST the <code>batchId</code> from the batch upload response to check the status of every file in that batch.</p></blockquote>
 <h3>Payload of batch status</h3>
 <table><thead>
 <tr><th>Key</th><th>Value type</th></tr>
 </thead><tbody>
-<tr><td>batchID</td><td>String &mdash; the <code>batch_id</code> returned from the batch upload call</td></tr>
+<tr><td>batchId</td><td>String &mdash; the <code>batch_id</code> returned from the batch upload call</td></tr>
 </tbody></table>
 <h3>Response of batch status</h3>
-<p>An array with the download URL for each tagged file in the batch, matched back to its <code>upload_id</code> and shared <code>batch_id</code>.</p>
+<p>The batch status API returns an array of objects, one per file. If a file's status is <code>completed</code>, its object includes a <code>file</code> key with the download URL:</p>
+<pre><code>{
+  "status": "completed",
+  "upload_id": "51debdae-88a8-4138-a954-42c7f1dd7ff2",
+  "file": "https://staticstorage.continualengine.com/media/tagged/sample1.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem",
+  "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d"
+}</code></pre>
+<p>If the file is still <code>in-progress</code>, it won't have a <code>file</code> key &mdash; instead it has a <code>value</code> key showing the percentage processed so far:</p>
+<pre><code>{
+  "status": "in-progress",
+  "upload_id": "73179df7-c0a2-492a-8dbc-a925c07d9a24",
+  "value": "4%",
+  "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d"
+}</code></pre>
+<p>Each file's <code>upload_id</code> is unique and can also be used to check that single file's status individually, as described in <a href="#auto-tag-file-status-api">3.3 Auto tag file status API</a>.</p>
   </div>
   <div class="code-col"><div class="section-heading">3.5 Auto tag batch status API</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active  active">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
@@ -791,7 +847,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <span class="nt">--header</span> <span class="s1">'api-id: prepuser_sample_id'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'app-key: ER31DE423hRlp37Dn8sD'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
-<span class="nt">--data</span> <span class="s1">'{"batchID": "96430b40-92d3-4d60-90dd-535a49fbce8d"}'</span></code></pre>
+<span class="nt">--data</span> <span class="s1">'{"batchId": "96430b40-92d3-4d60-90dd-535a49fbce8d"}'</span></code></pre>
 </div><h3 class="col-label">Response</h3><div class="code-block lang-json  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="p">[</span>
