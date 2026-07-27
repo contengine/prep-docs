@@ -238,6 +238,14 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   letter-spacing: 0.04em;
   margin: 22px 0 10px;
 }
+.code-col .section-heading {
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #2c2d33;
+}
 .code-col .callout {
   color: #8b8d97;
   font-size: 12.5px;
@@ -540,10 +548,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <li><strong>POST process/ping/</strong> &mdash; Checks the status of the auto-tagging job and returns the download link once ready.</li>
 </ul>
   </div>
-  <div class="code-col"><p class="callout">Signed upload URL example</p><div class="code-block lang-shell active  always">
-  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  <pre class="highlight"><code>https://static-storage-bucket.s3.amazonaws.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321</code></pre>
-</div></div>
+  <div class="code-col"></div>
 </section>
 <section class="doc-section" id="api-idkey-setup">
   <div class="text-col">
@@ -579,7 +584,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <tr><td><code>{"status": "success", "upload_id": "&hellip;", "filename": "sample.pdf"}</code></td><td>201</td></tr>
 </tbody></table>
   </div>
-  <div class="code-col"><div class="code-block lang-python">
+  <div class="code-col"><div class="section-heading">3.1 Auto tag API</div><h3 class="col-label">Request</h3><div class="code-block lang-python">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="kn">import</span> <span class="nn">requests</span>
 
@@ -602,7 +607,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <span class="nt">--header</span> <span class="s1">'app-key: ER31DE423hRlp37Dn8sD'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
 <span class="nt">--data</span> <span class="s1">'{"file_name": "sample.pdf"}'</span></code></pre>
-</div><h3 class="col-label">Example response</h3><div class="code-block lang-json  always">
+</div><h3 class="col-label">Response</h3><div class="code-block lang-json  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="p">{</span>
   <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
@@ -621,7 +626,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <blockquote><p>PUT the file directly to the signed Static Storage URL returned in step 3.1.</p></blockquote>
 <aside class="warning">This request goes straight to <code>static-storage-bucket.s3.amazonaws.com</code>, not to the PREP API host &mdash; do not add your <code>api-id</code>/<code>app-key</code> headers here.</aside>
   </div>
-  <div class="code-col"><div class="code-block lang-shell active  always">
+  <div class="code-col"><div class="section-heading">3.2 Upload file</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code>curl <span class="s1">'https://static-storage-bucket.s3.amazonaws.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321'</span> <span class="se">\</span>
 <span class="nt">-X</span> <span class="s1">'PUT'</span> <span class="se">\</span>
@@ -653,7 +658,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <tr><td>Failed</td><td>417</td></tr>
 </tbody></table>
   </div>
-  <div class="code-col"><div class="code-block lang-python">
+  <div class="code-col"><div class="section-heading">3.3 Auto tag file status API</div><h3 class="col-label">Request</h3><div class="code-block lang-python">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -678,7 +683,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <span class="nt">--header</span> <span class="s1">'api-id: prepuser_sample_id'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'app-key: ER31DE423hRlp37Dn8sD'</span> <span class="se">\</span>
 <span class="nt">--data</span> <span class="s1">'{"processId": "80193b9e-b456-4d68-b99b-0cd5360655fa"}'</span></code></pre>
-</div><h3 class="col-label">Example responses</h3><div class="code-block lang-json  always">
+</div><h3 class="col-label">Response</h3><div class="code-block lang-json  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="c1">// in progress &mdash; 200</span>
 <span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"in-progress"</span><span class="p">,</span> <span class="nl">"value"</span><span class="p">:</span> <span class="s2">"35%"</span> <span class="p">}</span>
@@ -714,7 +719,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <h3>Response for batch upload</h3>
 <p>The response is an array with one entry per file &mdash; each carries its own <code>upload_id</code> plus a shared <code>batch_id</code> for polling status later.</p>
   </div>
-  <div class="code-col"><div class="code-block lang-shell active">
+  <div class="code-col"><div class="section-heading">3.4 Auto tag batch API</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code>curl <span class="nt">--location</span> <span class="s1">'https://ingprfl.continualengine.com/v3/process/init-auto-tag-batch/'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'api-id: prepuser_sample_id'</span> <span class="se">\</span>
@@ -727,62 +732,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   {"file_name": "sample4.pdf"},
   {"file_name": "sample5.pdf"}
 ]'</span></code></pre>
-</div><h3 class="col-label">Example response</h3><div class="code-block lang-json  always">
-  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  <pre class="highlight"><code><span class="p">[</span>
-    <span class="p">{</span>
-    <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"51debdae-88a8-4138-a954-42c7f1dd7ff2"</span><span class="p">,</span>
-    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample1.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
-    <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"95199cf7-94a1-4b8b-b1c3-6aa545cef694"</span><span class="p">,</span>
-    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample2.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
-    <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"8f8b4b28-bd74-4009-97cf-e4ba6d047339"</span><span class="p">,</span>
-    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample3.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
-    <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"657db789-953c-4828-865c-ef0ef43b97a1"</span><span class="p">,</span>
-    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample4.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
-    <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"73179df7-c0a2-492a-8dbc-a925c07d9a24"</span><span class="p">,</span>
-    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample5.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
-    <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
-  <span class="p">}</span>
-<span class="p">]</span>  <span class="c1">// 201</span></code></pre>
-</div><figure class="result-image">
-  <!-- <img src="./PREP_Auto_Tag_API_documentation_files/batch-upload-postman.png" alt="Initiate batch upload &amp;mdash; Postman example"> -->
-  <!-- <figcaption>Initiate batch upload &mdash; Postman example</figcaption> -->
-</figure></div>
-</section>
-<section class="doc-section" id="auto-tag-batch-status-api">
-  <div class="text-col">
-    <h2 id="auto-tag-batch-status-api">3.5 Auto tag batch status API</h2>
-<h3>3.5.1 Batch processing status</h3>
-<blockquote><p>POST the <code>batchID</code> from the batch upload response to check the status of every file in that batch.</p></blockquote>
-<h3>Payload of batch status</h3>
-<table><thead>
-<tr><th>Key</th><th>Value type</th></tr>
-</thead><tbody>
-<tr><td>batchID</td><td>String &mdash; the <code>batch_id</code> returned from the batch upload call</td></tr>
-</tbody></table>
-<h3>Response of batch status</h3>
-<p>An array with the download URL for each tagged file in the batch, matched back to its <code>upload_id</code> and shared <code>batch_id</code>.</p>
-  </div>
-  <div class="code-col"><div class="code-block lang-shell active  active">
-  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  <pre class="highlight"><code>curl <span class="nt">--location</span> <span class="s1">'https://ingprfl.continualengine.com/v3/batch/ping/'</span> <span class="se">\</span>
-<span class="nt">--header</span> <span class="s1">'api-id: prepuser_sample_id'</span> <span class="se">\</span>
-<span class="nt">--header</span> <span class="s1">'app-key: ER31DE423hRlp37Dn8sD'</span> <span class="se">\</span>
-<span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
-<span class="nt">--data</span> <span class="s1">'{"batchID": "96430b40-92d3-4d60-90dd-535a49fbce8d"}'</span></code></pre>
-</div><h3 class="col-label">Example response</h3><div class="code-block lang-json  always">
+</div><h3 class="col-label">Response</h3><div class="code-block lang-json  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="p">[</span>
   <span class="p">{</span>
@@ -815,6 +765,66 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
     <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample5.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
   <span class="p">}</span>
+<span class="p">]</span>  <span class="c1">// 201</span></code></pre>
+</div><figure class="result-image">
+  <!-- <img src="./PREP_Auto_Tag_API_documentation_files/batch-upload-postman.png" alt="Initiate batch upload &amp;mdash; Postman example"> -->
+  <!-- <figcaption>Initiate batch upload &mdash; Postman example</figcaption> -->
+</figure></div>
+</section>
+<section class="doc-section" id="auto-tag-batch-status-api">
+  <div class="text-col">
+    <h2 id="auto-tag-batch-status-api">3.5 Auto tag batch status API</h2>
+<h3>3.5.1 Batch processing status</h3>
+<blockquote><p>POST the <code>batchID</code> from the batch upload response to check the status of every file in that batch.</p></blockquote>
+<h3>Payload of batch status</h3>
+<table><thead>
+<tr><th>Key</th><th>Value type</th></tr>
+</thead><tbody>
+<tr><td>batchID</td><td>String &mdash; the <code>batch_id</code> returned from the batch upload call</td></tr>
+</tbody></table>
+<h3>Response of batch status</h3>
+<p>An array with the download URL for each tagged file in the batch, matched back to its <code>upload_id</code> and shared <code>batch_id</code>.</p>
+  </div>
+  <div class="code-col"><div class="section-heading">3.5 Auto tag batch status API</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active  active">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code>curl <span class="nt">--location</span> <span class="s1">'https://ingprfl.continualengine.com/v3/batch/ping/'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'api-id: prepuser_sample_id'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'app-key: ER31DE423hRlp37Dn8sD'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
+<span class="nt">--data</span> <span class="s1">'{"batchID": "96430b40-92d3-4d60-90dd-535a49fbce8d"}'</span></code></pre>
+</div><h3 class="col-label">Response</h3><div class="code-block lang-json  always">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
+    <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"51debdae-88a8-4138-a954-42c7f1dd7ff2"</span><span class="p">,</span>
+    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample1.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
+    <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
+    <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"95199cf7-94a1-4b8b-b1c3-6aa545cef694"</span><span class="p">,</span>
+    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample2.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
+    <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
+    <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"8f8b4b28-bd74-4009-97cf-e4ba6d047339"</span><span class="p">,</span>
+    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample3.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
+    <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"in-progress"</span><span class="p">,</span>
+    <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"657db789-953c-4828-865c-ef0ef43b97a1"</span><span class="p">,</span>
+    <span class="nl">"value"</span><span class="p">:</span> <span class="s2">"35%"</span><span class="p">,</span>
+    <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"in-progress"</span><span class="p">,</span>
+    <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"73179df7-c0a2-492a-8dbc-a925c07d9a24"</span><span class="p">,</span>
+    <span class="nl">"value"</span><span class="p">:</span> <span class="s2">"4%"</span><span class="p">,</span>
+    <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
+  <span class="p">}</span>
 <span class="p">]</span></code></pre>
 </div><figure class="result-image">
   <!-- <img src="./PREP_Auto_Tag_API_documentation_files/batch-status-postman.png" alt="Batch processing status &amp;mdash; Postman example"> -->
@@ -834,7 +844,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <tr><td>Internal error</td><td>500</td></tr>
 </tbody></table>
   </div>
-  <div class="code-col"><div class="code-block lang-json  always always">
+  <div class="code-col"><div class="section-heading">4. Error Codes</div><h3 class="col-label">Response</h3><div class="code-block lang-json  always always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="c1">// Resource exhausted &mdash; 429</span>
 <span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"Either out of resource quota or reaching rate limiting"</span> <span class="p">}</span>
@@ -855,7 +865,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <h2 id="templates-api-python">5.1 Get available templates</h2>
 <blockquote><p>Returns the templates that are available for the user.</p></blockquote>
   </div>
-  <div class="code-col"><div class="code-block lang-python">
+  <div class="code-col"><div class="section-heading">5. Templates API</div><h3 class="col-label">Request</h3><div class="code-block lang-python">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -877,7 +887,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <span class="nt">--header</span> <span class="s1">'api-id: prepuser_sample_id'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'app-key: al31sp423halp37fn8saf'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span></code></pre>
-</div><h3 class="col-label">Example response</h3><div class="code-block lang-json  always">
+</div><h3 class="col-label">Response</h3><div class="code-block lang-json  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="c1">// 200</span>
 <span class="p">{</span> <span class="nl">"id"</span><span class="p">:</span> <span class="mi">323</span><span class="p">,</span> <span class="nl">"name"</span><span class="p">:</span> <span class="s2">"factsheet"</span> <span class="p">}</span>
@@ -960,7 +970,6 @@ function filterNav(q) {
   });
 }
 
-// scrollspy
 document.addEventListener('DOMContentLoaded', () => {
   const links = Array.from(document.querySelectorAll('.toc-link'));
   const targets = links.map(l => document.getElementById(l.dataset.target)).filter(Boolean);
