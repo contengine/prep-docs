@@ -597,7 +597,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <table><thead>
 <tr><th>Response JSON</th><th>Status code</th></tr>
 </thead><tbody>
-<tr><td><code>{"status": "success", "upload_id": "&hellip;", "filename": "sample.pdf"}</code></td><td>201</td></tr>
+<tr><td><code>{"status": "success", "upload_id": "80193b9e-b456-4d68-b99b-0cd5360655fa", "filename": "sample.pdf", "upload_url": "https://static-storage-bucket.s3.amazonaws.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"}</code></td><td>201</td></tr>
 </tbody></table>
   </div>
   <div class="code-col"><div class="section-heading">3.1 Auto tag API</div><h3 class="col-label">Request</h3><div class="code-block lang-python">
@@ -628,7 +628,8 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <pre class="highlight"><code><span class="p">{</span>
   <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
   <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"80193b9e-b456-4d68-b99b-0cd5360655fa"</span><span class="p">,</span>
-  <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample.pdf"</span>
+  <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample.pdf"</span><span class="p">,</span>
+  <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-bucket.s3.amazonaws.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
 <span class="p">}</span>  <span class="c1">// 201</span></code></pre>
 </div><figure class="result-image">
   <!-- <img src="./PREP_Auto_Tag_API_documentation_files/init-auto-tag-postman.png" alt="Initiate upload &amp;mdash; Postman example"> -->
