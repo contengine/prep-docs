@@ -215,11 +215,19 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   background: none;
   padding: 0;
   color: inherit;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 .text-col table pre.highlight {
-  background: #16171a;
-  color: #e6e6e6;
+  background: #ffffff;
+  color: #2b2b2b;
 }
+.text-col table pre.highlight .nl { color: #b3261e; }
+.text-col table pre.highlight .s2,
+.text-col table pre.highlight .s1,
+.text-col table pre.highlight .s { color: #0a7a3d; }
+.text-col table pre.highlight .p { color: #57606a; }
+.text-col table pre.highlight .c1 { color: #8b8d97; }
 
 .text-col aside {
   background: #eef6ff;
