@@ -619,7 +619,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <tr><td><code>status</code></td><td>Indicates whether the request was accepted. Always <code>"success"</code> for a 201 response.</td></tr>
 <tr><td><code>upload_id</code></td><td>Unique identifier (UUID) for this upload. Use it to poll processing status via <a href="#auto-tag-file-status-api">3.3 Auto tag file status API</a>.</td></tr>
 <tr><td><code>filename</code></td><td>The name of the file that was submitted for auto-tagging.</td></tr>
-<tr><td><code>upload_url</code></td><td>Signed URL to <code>PUT</code> the file to, in order to begin processing (see <a href="#upload-file">3.2 Upload file</a>). Expires after a limited time window.</td></tr>
+<tr><td><code>upload_url</code></td><td>Signed URL to <code>PUT</code> the file to, in order to begin processing (see <a href="#upload-file">3.2 Upload file</a>). Expires within 5 minutes.</td></tr>
 </tbody></table>
 <table><thead>
 <tr><th>Response JSON</th><th>Status code</th></tr>
@@ -628,7 +628,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
   <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"80193b9e-b456-4d68-b99b-0cd5360655fa"</span><span class="p">,</span>
   <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample.pdf"</span><span class="p">,</span>
-  <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+  <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=300&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
 <span class="p">}</span></code></pre></td><td>201</td></tr>
 </tbody></table>
   </div>
@@ -661,7 +661,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
   <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"80193b9e-b456-4d68-b99b-0cd5360655fa"</span><span class="p">,</span>
   <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample.pdf"</span><span class="p">,</span>
-  <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+  <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=300&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
 <span class="p">}</span>  <span class="c1">// 201</span></code></pre>
 </div><figure class="result-image">
   <!-- <img src="./PREP_Auto_Tag_API_documentation_files/init-auto-tag-postman.png" alt="Initiate upload &amp;mdash; Postman example"> -->
@@ -687,7 +687,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   </div>
   <div class="code-col"><div class="section-heading">3.2 Upload file</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  <pre class="highlight"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> <span class="nt">PUT</span> <span class="s1">'https://static-storage-ac21-bucket.s3.amazonaws.com/media/files/sources/20260727125614684788_b9eb569b-d790-436e-8238-b4619125485d_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFLL%2F20260727%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260727T125614Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=8185754b78cec95a5f17766237c14333d8ee0dd886f209d4c0d6935608f141dd'</span> <span class="se">\</span>
+  <pre class="highlight"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> <span class="nt">PUT</span> <span class="s1">'https://static-storage-ac21-bucket.s3.amazonaws.com/media/files/sources/20260727125614684788_b9eb569b-d790-436e-8238-b4619125485d_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFLL%2F20260727%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260727T125614Z&amp;X-Amz-Expires=300&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=8185754b78cec95a5f17766237c14333d8ee0dd886f209d4c0d6935608f141dd'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'Referer: https://console.prep.continualengine.com/'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'Content-Type: application/pdf'</span> <span class="se">\</span>
 <span class="nt">--data-binary</span> <span class="s1">'path-to-file/sample.pdf'</span></code></pre>
@@ -711,7 +711,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 </thead><tbody>
 <tr><td><code>status</code></td><td>Current processing state of the file: <code>in-progress</code>, <code>completed</code>, or <code>failed</code>.</td></tr>
 <tr><td><code>value</code></td><td>Only present when <code>status</code> is <code>in-progress</code>. Percentage of the document processed so far (e.g. <code>"35%"</code>).</td></tr>
-<tr><td><code>url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for the tagged file. Expires after a limited time window.</td></tr>
+<tr><td><code>url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for the tagged file. Expires within 5 minutes.</td></tr>
 <tr><td><code>error</code></td><td>Only present when <code>status</code> is <code>failed</code>. Human-readable description of what went wrong.</td></tr>
 </tbody></table>
 <table><thead>
@@ -787,7 +787,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   "upload_id": "51debdae-88a8-4138-a954-42c7f1dd7ff2",
   "filename": "sample1.pdf",
   "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d",
-  "upload_url": "https://static-storage-v3-continualengine.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"
+  "upload_url": "https://static-storage-v3-continualengine.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=300&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"
 }</code></pre>
 <table><thead>
 <tr><th>Key</th><th>Description</th></tr>
@@ -796,7 +796,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <tr><td><code>upload_id</code></td><td>Unique identifier (UUID) for this file within the batch. Use it with <a href="#auto-tag-file-status-api">3.3 Auto tag file status API</a> to check this one file's status individually.</td></tr>
 <tr><td><code>filename</code></td><td>The name of this file as submitted in the batch payload.</td></tr>
 <tr><td><code>batch_id</code></td><td>Identifier shared by every file in this batch. Use it with <a href="#auto-tag-batch-status-api">3.5 Auto tag batch status API</a> to poll the whole batch's status at once.</td></tr>
-<tr><td><code>upload_url</code></td><td>Signed URL to <code>PUT</code> this specific file to, in order to begin processing (see <a href="#upload-file">3.2 Upload file</a>). Each file in the batch gets its own <code>upload_url</code>.</td></tr>
+<tr><td><code>upload_url</code></td><td>Signed URL to <code>PUT</code> this specific file to, in order to begin processing (see <a href="#upload-file">3.2 Upload file</a>). Expires within 5 minutes. Each file in the batch gets its own <code>upload_url</code>.</td></tr>
 </tbody></table>
 <table><thead>
 <tr><th>Response JSON</th><th>Status code</th></tr>
@@ -807,14 +807,14 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"51debdae-88a8-4138-a954-42c7f1dd7ff2"</span><span class="p">,</span>
     <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample1.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=300&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"95199cf7-94a1-4b8b-b1c3-6aa545cef694"</span><span class="p">,</span>
     <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample2.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/95199cf7-94a1-4b8b-b1c3-6aa545cef694_sample2.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/95199cf7-94a1-4b8b-b1c3-6aa545cef694_sample2.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=300&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">},</span>
   <span class="c1">........,</span>
   <span class="c1">........,</span>
@@ -848,35 +848,35 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"51debdae-88a8-4138-a954-42c7f1dd7ff2"</span><span class="p">,</span>
     <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample1.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=300&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"95199cf7-94a1-4b8b-b1c3-6aa545cef694"</span><span class="p">,</span>
     <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample2.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/95199cf7-94a1-4b8b-b1c3-6aa545cef694_sample2.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/95199cf7-94a1-4b8b-b1c3-6aa545cef694_sample2.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=300&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"8f8b4b28-bd74-4009-97cf-e4ba6d047339"</span><span class="p">,</span>
     <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample3.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/8f8b4b28-bd74-4009-97cf-e4ba6d047339_sample3.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/8f8b4b28-bd74-4009-97cf-e4ba6d047339_sample3.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=300&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"657db789-953c-4828-865c-ef0ef43b97a1"</span><span class="p">,</span>
     <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample4.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/657db789-953c-4828-865c-ef0ef43b97a1_sample4.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/657db789-953c-4828-865c-ef0ef43b97a1_sample4.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=300&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"73179df7-c0a2-492a-8dbc-a925c07d9a24"</span><span class="p">,</span>
     <span class="nl">"filename"</span><span class="p">:</span> <span class="s2">"sample5.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/73179df7-c0a2-492a-8dbc-a925c07d9a24_sample5.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/73179df7-c0a2-492a-8dbc-a925c07d9a24_sample5.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=300&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">}</span>
 <span class="p">]</span>  <span class="c1">// 201</span></code></pre>
 </div><figure class="result-image">
@@ -926,7 +926,7 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
 </thead><tbody>
 <tr><td><code>status</code></td><td>Current processing state of this file within the batch: <code>completed</code> or <code>in-progress</code>.</td></tr>
 <tr><td><code>upload_id</code></td><td>Identifies which file in the batch this entry refers to &mdash; matches the <code>upload_id</code> returned for that file in <a href="#auto-tag-batch-api">3.4 Auto tag batch API</a>.</td></tr>
-<tr><td><code>file</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for this file's tagged output. Expires after a limited time window.</td></tr>
+<tr><td><code>file</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for this file's tagged output. Expires within 5 minutes.</td></tr>
 <tr><td><code>value</code></td><td>Only present when <code>status</code> is <code>in-progress</code>. Percentage of this file processed so far (e.g. <code>"4%"</code>).</td></tr>
 <tr><td><code>batch_id</code></td><td>Identifier shared by every file in the same batch &mdash; the same value you posted to this endpoint.</td></tr>
 </tbody></table>
