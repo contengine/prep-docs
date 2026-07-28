@@ -199,7 +199,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   vertical-align: top;
   color: #3c3d44;
 }
-.text-col table code { white-space: normal; word-break: break-all; }
+.text-col table code { white-space: normal; word-break: normal; overflow-wrap: break-word; }
 .text-col table pre {
   margin: 0;
   padding: 10px 12px;
@@ -577,7 +577,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <p>The Auto-tag API exposes three RESTful endpoints:</p>
 <ul>
 <li><strong>POST v3/process/init-auto-tag/</strong> &mdash; Starts the auto-tagging workflow for a PDF file. This call kicks off the auto-tagging process and returns a unique, signed URL that the file will be uploaded to in the next step.</li>
-<li><strong>POST</strong> <code>https://static-storage-bucket.s3.amazonaws.com/&hellip;/signed_url/</code> &mdash; Uploads the file to Static Storage. Post the file directly to the signed URL returned above.</li>
+<li><strong>PUT</strong> <code>https://static-storage-bucket.s3.amazonaws.com/&hellip;/signed_url/</code> &mdash; Uploads the file to Static Storage. PUT the file directly to the signed URL returned above.</li>
 <li><strong>POST process/ping/</strong> &mdash; Checks the status of the auto-tagging job and returns the download link once ready.</li>
 </ul>
   </div>
@@ -594,7 +594,8 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <section class="doc-section" id="api-specs">
   <div class="text-col">
     <h1 id="api-specs">3. API Specs</h1>
-<p><strong>Base URL:</strong> <code>https://ingprfl.continualengine.com/v3/</code></p>
+<p><strong>Base URL:</strong> <code>https://ingprfl.continualengine.com</code></p>
+<p>Every endpoint below is relative to this Base URL &mdash; e.g. <code>/v3/process/init-auto-tag/</code> is called as <code>https://ingprfl.continualengine.com/v3/process/init-auto-tag/</code>.</p>
   </div>
   <div class="code-col"></div>
 </section>
@@ -603,6 +604,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
     <h2 id="auto-tag-api">3.1 Auto tag API</h2>
 <h3>3.1.1 Initiate upload for Auto Tag</h3>
 <blockquote><p>POST file to auto tag API</p></blockquote>
+<p><strong>Endpoint:</strong> <code>POST /v3/process/init-auto-tag/</code></p>
 <h3>Payload</h3>
 <table><thead>
 <tr><th>Key</th><th>Value type</th></tr>
@@ -611,6 +613,14 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <tr><td>template_id <em>(optional)</em></td><td>integer &mdash; id of the template</td></tr>
 </tbody></table>
 <h3>Response</h3>
+<table><thead>
+<tr><th>Key</th><th>Description</th></tr>
+</thead><tbody>
+<tr><td><code>status</code></td><td>Indicates whether the request was accepted. Always <code>"success"</code> for a 201 response.</td></tr>
+<tr><td><code>upload_id</code></td><td>Unique identifier (UUID) for this upload. Use it to poll processing status via <a href="#auto-tag-file-status-api">3.3 Auto tag file status API</a>.</td></tr>
+<tr><td><code>filename</code></td><td>The name of the file that was submitted for auto-tagging.</td></tr>
+<tr><td><code>upload_url</code></td><td>Signed URL to <code>PUT</code> the file to, in order to begin processing (see <a href="#upload-file">3.2 Upload file</a>). Expires after a limited time window.</td></tr>
+</tbody></table>
 <table><thead>
 <tr><th>Response JSON</th><th>Status code</th></tr>
 </thead><tbody>
@@ -663,18 +673,24 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
     <h2 id="upload-file">3.2 Upload file</h2>
 <h3>3.2.1 Upload file to process</h3>
 <blockquote><p>PUT the file directly to the signed Static Storage URL returned in step 3.1.</p></blockquote>
+<p><strong>Endpoint:</strong> <code>PUT &lt;upload_url&gt;</code> &mdash; the full signed URL returned in the <a href="#auto-tag-api">3.1 Auto tag API</a> response, not a fixed path off the Base URL.</p>
 <aside class="warning">This request goes straight to <code>static-storage-bucket.s3.amazonaws.com</code>, not to the PREP API host &mdash; do not add your <code>api-id</code>/<code>app-key</code> headers here.</aside>
+<h3>Response</h3>
+<p>This is a direct pre-signed upload to S3, not a PREP API call &mdash; on success it returns an empty body with an <code>ETag</code> header, not JSON.</p>
+<table><thead>
+<tr><th>Result</th><th>Meaning</th><th>Status code</th></tr>
+</thead><tbody>
+<tr><td>Success</td><td>Empty body. The file was received &mdash; proceed to poll <a href="#auto-tag-file-status-api">3.3 Auto tag file status API</a> using the <code>upload_id</code> from step 3.1.</td><td>200</td></tr>
+<tr><td>Expired URL</td><td>The signed URL's <code>X-Amz-Expires</code> window has passed. Request a new upload URL via <a href="#auto-tag-api">3.1 Auto tag API</a>.</td><td>403</td></tr>
+<tr><td>Signature mismatch</td><td>The URL was modified, or the file content-type doesn't match what was signed for.</td><td>403</td></tr>
+</tbody></table>
   </div>
   <div class="code-col"><div class="section-heading">3.2 Upload file</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  <pre class="highlight"><code>curl <span class="s1">'https://static-storage-bucket.s3.amazonaws.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321'</span> <span class="se">\</span>
-<span class="nt">-X</span> <span class="s1">'PUT'</span> <span class="se">\</span>
-<span class="nt">-H</span> <span class="s1">'Referer: https://console.prep.continualengine.com/'</span> <span class="se">\</span>
-<span class="nt">-H</span> <span class="s1">'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36'</span> <span class="se">\</span>
-<span class="nt">-H</span> <span class="s1">'Accept: application/json, text/plain, */*'</span> <span class="se">\</span>
-<span class="nt">-H</span> <span class="s1">'sec-ch-ua: "Not;A=Brand";v="8", "Chromium";v="150", "Google Chrome";v="150"'</span> <span class="se">\</span>
-<span class="nt">-H</span> <span class="s1">'Content-Type: application/pdf; charset=utf-8'</span> <span class="se">\</span>
-<span class="nt">-H</span> <span class="s1">'sec-ch-ua-mobile: ?0'</span></code></pre>
+  <pre class="highlight"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> <span class="nt">PUT</span> <span class="s1">'https://static-storage-ac21-bucket.s3.amazonaws.com/media/files/sources/20260727125614684788_b9eb569b-d790-436e-8238-b4619125485d_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFLL%2F20260727%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260727T125614Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=8185754b78cec95a5f17766237c14333d8ee0dd886f209d4c0d6935608f141dd'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'Referer: https://console.prep.continualengine.com/'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'Content-Type: application/pdf'</span> <span class="se">\</span>
+<span class="nt">--data-binary</span> <span class="s1">'path-to-file/sample.pdf'</span></code></pre>
 </div></div>
 </section>
 <section class="doc-section" id="auto-tag-file-status-api">
@@ -682,6 +698,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
     <h2 id="auto-tag-file-status-api">3.3 Auto tag file status API</h2>
 <h3>3.3.1 Fetch processing status</h3>
 <blockquote><p>POST the <code>uploadId</code> to get the status and download URL of the auto-tagged file.</p></blockquote>
+<p><strong>Endpoint:</strong> <code>POST /v3/process/ping/</code></p>
 <h3>Payload</h3>
 <table><thead>
 <tr><th>Key</th><th>Value type</th></tr>
@@ -690,10 +707,18 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 </tbody></table>
 <h3>Response</h3>
 <table><thead>
+<tr><th>Key</th><th>Description</th></tr>
+</thead><tbody>
+<tr><td><code>status</code></td><td>Current processing state of the file: <code>in-progress</code>, <code>completed</code>, or <code>failed</code>.</td></tr>
+<tr><td><code>value</code></td><td>Only present when <code>status</code> is <code>in-progress</code>. Percentage of the document processed so far (e.g. <code>"35%"</code>).</td></tr>
+<tr><td><code>url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for the tagged file. Expires after a limited time window.</td></tr>
+<tr><td><code>error</code></td><td>Only present when <code>status</code> is <code>failed</code>. Human-readable description of what went wrong.</td></tr>
+</tbody></table>
+<table><thead>
 <tr><th>Status of autotag</th><th>Response JSON</th><th>Status code</th></tr>
 </thead><tbody>
 <tr><td>In Progress</td><td><code>{"status": "in-progress", "value": "35%"}</code></td><td>200</td></tr>
-<tr><td>Completed</td><td><code>{"status": "completed", "url": "https://staticstorage.continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"}</code></td><td>200</td></tr>
+<tr><td>Completed</td><td><code>{"status": "completed", "url": "https://static-storage-v3-continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"}</code></td><td>200</td></tr>
 <tr><td>Failed</td><td><code>{"status": "failed", "error": "Internal error."}</code></td><td>417</td></tr>
 </tbody></table>
   </div>
@@ -730,7 +755,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <span class="c1">// completed &mdash; 200</span>
 <span class="p">{</span>
   <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
-  <span class="nl">"url"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span>
+  <span class="nl">"url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span>
 <span class="p">}</span>
 
 <span class="c1">// failed &mdash; 417</span>
@@ -745,7 +770,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
     <h2 id="auto-tag-batch-api">3.4 Auto tag batch API</h2>
 <h3>3.4.1 Initiate upload for Auto Tag (batch)</h3>
 <blockquote><p>POST a batch of files to the auto tag API.</p></blockquote>
-<h3>3.4.2 Initiate batch upload for Auto Tag</h3>
+<p><strong>Endpoint:</strong> <code>POST /v3/process/init-auto-tag-batch/</code></p>
 <h3>Payload for batch upload</h3>
 <p>An array of file objects, one per document in the batch:</p>
 <pre><code>[
@@ -764,6 +789,15 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d",
   "upload_url": "https://static-storage-bucket.s3.amazonaws.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"
 }</code></pre>
+<table><thead>
+<tr><th>Key</th><th>Description</th></tr>
+</thead><tbody>
+<tr><td><code>status</code></td><td>Whether this individual file was accepted into the batch. Always <code>"success"</code> for a 201 response.</td></tr>
+<tr><td><code>upload_id</code></td><td>Unique identifier (UUID) for this file within the batch. Use it with <a href="#auto-tag-file-status-api">3.3 Auto tag file status API</a> to check this one file's status individually.</td></tr>
+<tr><td><code>filename</code></td><td>The name of this file as submitted in the batch payload.</td></tr>
+<tr><td><code>batch_id</code></td><td>Identifier shared by every file in this batch. Use it with <a href="#auto-tag-batch-status-api">3.5 Auto tag batch status API</a> to poll the whole batch's status at once.</td></tr>
+<tr><td><code>upload_url</code></td><td>Signed URL to <code>PUT</code> this specific file to, in order to begin processing (see <a href="#upload-file">3.2 Upload file</a>). Each file in the batch gets its own <code>upload_url</code>.</td></tr>
+</tbody></table>
 <table><thead>
 <tr><th>Response JSON</th><th>Status code</th></tr>
 </thead><tbody>
@@ -786,6 +820,12 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <span class="c1">........,</span>
 <span class="p">]</span></code></pre></td><td>201</td></tr>
 </tbody></table>
+<h3>3.4.2 Upload files to process (batch)</h3>
+<blockquote><p>PUT each file directly to its own signed Static Storage URL returned above &mdash; the same mechanism as <a href="#upload-file">3.2 Upload file</a>, repeated once per file in the batch.</p></blockquote>
+<p><strong>Endpoint:</strong> <code>PUT &lt;upload_url&gt;</code> &mdash; a different signed URL per file, taken from that file's own <code>upload_url</code> in the batch response above.</p>
+<aside class="warning">Every file in the batch has its own <code>upload_url</code> and must be uploaded individually. Uploading only one file does not upload the rest of the batch.</aside>
+<h3>Response</h3>
+<p>Same as <a href="#upload-file">3.2 Upload file</a>: each successful upload returns an empty body with an <code>ETag</code> header (200), not JSON. Once every file in the batch has been uploaded, poll <a href="#auto-tag-batch-status-api">3.5 Auto tag batch status API</a> with the shared <code>batch_id</code> to track processing.</p>
   </div>
   <div class="code-col"><div class="section-heading">3.4 Auto tag batch API</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
@@ -842,13 +882,23 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 </div><figure class="result-image">
   <!-- <img src="./PREP_Auto_Tag_API_documentation_files/batch-upload-postman.png" alt="Initiate batch upload &amp;mdash; Postman example"> -->
   <!-- <figcaption>Initiate batch upload &mdash; Postman example</figcaption> -->
-</figure></div>
+</figure><div class="section-heading" style="margin-top: 34px; padding-top: 22px; border-top: 1px solid #2c2d33;">3.4.2 Upload files to process (batch)</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active  always">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre class="highlight"><code><span class="c1"># repeat once per file, using that file's own upload_url</span>
+curl <span class="nt">--location</span> <span class="nt">--request</span> <span class="nt">PUT</span> <span class="s1">'&lt;upload_url for sample1.pdf&gt;'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'Referer: https://console.prep.continualengine.com/'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'Content-Type: application/pdf'</span> <span class="se">\</span>
+<span class="nt">--data-binary</span> <span class="s1">'path-to-file/sample1.pdf'</span>
+
+<span class="c1"># then again for sample2.pdf, sample3.pdf, ... using each one's own upload_url</span></code></pre>
+</div></div>
 </section>
 <section class="doc-section" id="auto-tag-batch-status-api">
   <div class="text-col">
     <h2 id="auto-tag-batch-status-api">3.5 Auto tag batch status API</h2>
 <h3>3.5.1 Batch processing status</h3>
 <blockquote><p>POST the <code>batchId</code> from the batch upload response to check the status of every file in that batch.</p></blockquote>
+<p><strong>Endpoint:</strong> <code>POST /v3/batch/ping/</code></p>
 <h3>Payload of batch status</h3>
 <table><thead>
 <tr><th>Key</th><th>Value type</th></tr>
@@ -860,7 +910,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <pre><code>{
   "status": "completed",
   "upload_id": "51debdae-88a8-4138-a954-42c7f1dd7ff2",
-  "file": "https://staticstorage.continualengine.com/media/tagged/sample1.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem",
+  "file": "https://static-storage-v3-continualengine.com/media/tagged/sample1.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem",
   "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d"
 }</code></pre>
 <p>If the file is still <code>in-progress</code>, it won't have a <code>file</code> key &mdash; instead it has a <code>value</code> key showing the percentage processed so far:</p>
@@ -871,6 +921,15 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d"
 }</code></pre>
 <p>Each file's <code>upload_id</code> is unique and can also be used to check that single file's status individually, as described in <a href="#auto-tag-file-status-api">3.3 Auto tag file status API</a>.</p>
+<table><thead>
+<tr><th>Key</th><th>Description</th></tr>
+</thead><tbody>
+<tr><td><code>status</code></td><td>Current processing state of this file within the batch: <code>completed</code> or <code>in-progress</code>.</td></tr>
+<tr><td><code>upload_id</code></td><td>Identifies which file in the batch this entry refers to &mdash; matches the <code>upload_id</code> returned for that file in <a href="#auto-tag-batch-api">3.4 Auto tag batch API</a>.</td></tr>
+<tr><td><code>file</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for this file's tagged output. Expires after a limited time window.</td></tr>
+<tr><td><code>value</code></td><td>Only present when <code>status</code> is <code>in-progress</code>. Percentage of this file processed so far (e.g. <code>"4%"</code>).</td></tr>
+<tr><td><code>batch_id</code></td><td>Identifier shared by every file in the same batch &mdash; the same value you posted to this endpoint.</td></tr>
+</tbody></table>
   </div>
   <div class="code-col"><div class="section-heading">3.5 Auto tag batch status API</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active  active">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
@@ -885,19 +944,19 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"51debdae-88a8-4138-a954-42c7f1dd7ff2"</span><span class="p">,</span>
-    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample1.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
+    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample1.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"95199cf7-94a1-4b8b-b1c3-6aa545cef694"</span><span class="p">,</span>
-    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample2.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
+    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample2.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"8f8b4b28-bd74-4009-97cf-e4ba6d047339"</span><span class="p">,</span>
-    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://staticstorage.continualengine.com/media/tagged/sample3.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
+    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample3.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
   <span class="p">},</span>
   <span class="p">{</span>
@@ -923,12 +982,18 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
     <h1 id="error-codes">4. Error Codes</h1>
 <p>PREP can respond with errors with the below codes.</p>
 <table><thead>
-<tr><th>Error</th><th>Status code</th></tr>
+<tr><th>Key</th><th>Description</th></tr>
 </thead><tbody>
-<tr><td>Resource exhausted</td><td>429</td></tr>
-<tr><td>Forbidden</td><td>403</td></tr>
-<tr><td>Bad Request</td><td>400</td></tr>
-<tr><td>Internal error</td><td>500</td></tr>
+<tr><td><code>status</code></td><td>Always <code>"failed"</code> on an error response.</td></tr>
+<tr><td><code>error</code></td><td>Human-readable description of what went wrong &mdash; safe to show directly to an end user or log for debugging.</td></tr>
+</tbody></table>
+<table><thead>
+<tr><th>Error</th><th>Cause</th><th>Status code</th></tr>
+</thead><tbody>
+<tr><td>Resource exhausted</td><td>Rate limit or quota exceeded for your account (see <a href="#rate-limits">6. Rate Limits</a>).</td><td>429</td></tr>
+<tr><td>Forbidden</td><td>Missing, invalid, or expired <code>api-id</code> / <code>app-key</code> credentials.</td><td>403</td></tr>
+<tr><td>Bad Request</td><td>The request body is missing a required field or contains an invalid value.</td><td>400</td></tr>
+<tr><td>Internal error</td><td>An unexpected failure occurred on PREP's side while processing the request.</td><td>500</td></tr>
 </tbody></table>
   </div>
   <div class="code-col"><div class="section-heading">4. Error Codes</div><h3 class="col-label">Response</h3><div class="code-block lang-json  always always">
@@ -951,6 +1016,20 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
     <h1 id="templates-api">5. Templates API</h1>
 <h2 id="templates-api-python">5.1 Get available templates</h2>
 <blockquote><p>Returns the templates that are available for the user.</p></blockquote>
+<p><strong>Endpoint:</strong> <code>GET /v3/accounts/templates/</code></p>
+<h3>Response</h3>
+<table><thead>
+<tr><th>Key</th><th>Description</th></tr>
+</thead><tbody>
+<tr><td><code>id</code></td><td>Unique identifier (integer) for the template. Pass this as the optional <code>template_id</code> when initiating an auto-tag upload (see <a href="#auto-tag-api">3.1 Auto tag API</a>) to apply this template.</td></tr>
+<tr><td><code>name</code></td><td>Human-readable name of the template, as shown in the PREP console.</td></tr>
+</tbody></table>
+<table><thead>
+<tr><th>Response JSON</th><th>Status code</th></tr>
+</thead><tbody>
+<tr><td><code>{"id": 323, "name": "factsheet"}</code></td><td>200</td></tr>
+<tr><td><code>{"status": "failed", "error": "Internal error."}</code></td><td>417</td></tr>
+</tbody></table>
   </div>
   <div class="code-col"><div class="section-heading">5. Templates API</div><h3 class="col-label">Request</h3><div class="code-block lang-python">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
