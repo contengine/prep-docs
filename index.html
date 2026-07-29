@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PREP Auto Tag API Documentation</title>
+<link rel="icon" type="image/png" href="./Images/prep-favicon.png">
+<link rel="shortcut icon" type="image/png" href="./Images/prep-favicon.png">
 <meta name="description" content="Documentation for the PREP Auto Tag API">
 <style>
 /* ---------- Reset & base ---------- */
@@ -635,6 +637,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
 <span class="p">}</span></code></pre></td><td>201</td></tr>
 </tbody></table>
+<p>If the <code>upload_url</code> expires before you use it, simply call this endpoint again to generate a new one.</p>
   </div>
   <div class="code-col"><div class="section-heading">3.1 Auto tag API</div><h3 class="col-label">Request</h3><div class="code-block lang-python">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
@@ -717,14 +720,14 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 </thead><tbody>
 <tr><td><code>status</code></td><td>Current processing state of the file: <code>in-progress</code>, <code>completed</code>, or <code>failed</code>.</td></tr>
 <tr><td><code>value</code></td><td>Only present when <code>status</code> is <code>in-progress</code>. Percentage of the document processed so far (e.g. <code>"35%"</code>).</td></tr>
-<tr><td><code>url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for the tagged file. Expires within 15 minutes.</td></tr>
+<tr><td><code>download_url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for the tagged file. Expires within 60 minutes.</td></tr>
 <tr><td><code>error</code></td><td>Only present when <code>status</code> is <code>failed</code>. Human-readable description of what went wrong.</td></tr>
 </tbody></table>
 <table><thead>
 <tr><th>Status of autotag</th><th>Response JSON</th><th>Status code</th></tr>
 </thead><tbody>
 <tr><td>In Progress</td><td><code>{"status": "in-progress", "value": "35%"}</code></td><td>200</td></tr>
-<tr><td>Completed</td><td><code>{"status": "completed", "url": "https://static-storage-v3-continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"}</code></td><td>200</td></tr>
+<tr><td>Completed</td><td><code>{"status": "completed", "download_url": "https://static-storage-v3-continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"}</code></td><td>200</td></tr>
 <tr><td>Failed</td><td><code>{"status": "failed", "error": "The file is corrupt."}</code></td><td>417</td></tr>
 </tbody></table>
   </div>
@@ -762,7 +765,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <span class="c1">// completed &mdash; 200</span>
 <span class="p">{</span>
   <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
-  <span class="nl">"url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span>
+  <span class="nl">"download_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span>
 <span class="p">}</span>
 
 <span class="c1">// failed &mdash; 417</span>
@@ -827,6 +830,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <span class="c1">........,</span>
 <span class="p">]</span></code></pre></td><td>201</td></tr>
 </tbody></table>
+<p>If a file's <code>upload_url</code> expires before you use it, call this endpoint again for that file to generate a new one.</p>
   </div>
   <div class="code-col"><div class="section-heading">3.4 Auto tag batch API</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
@@ -920,14 +924,14 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
 <tr><td>batchId</td><td>String &mdash; the <code>batch_id</code> returned from the batch upload call</td></tr>
 </tbody></table>
 <h3>Response of batch status</h3>
-<p>The batch status API returns an array of objects, one per file. If a file's status is <code>completed</code>, its object includes a <code>file</code> key with the download URL:</p>
+<p>The batch status API returns an array of objects, one per file. If a file's status is <code>completed</code>, its object includes a <code>download_url</code> key with the download URL:</p>
 <pre><code>{
   "status": "completed",
   "upload_id": "51debdae-88a8-4138-a954-42c7f1dd7ff2",
-  "file": "https://static-storage-v3-continualengine.com/media/tagged/sample1.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem",
+  "download_url": "https://static-storage-v3-continualengine.com/media/tagged/sample1.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem",
   "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d"
 }</code></pre>
-<p>If the file is still <code>in-progress</code>, it won't have a <code>file</code> key &mdash; instead it has a <code>value</code> key showing the percentage processed so far:</p>
+<p>If the file is still <code>in-progress</code>, it won't have a <code>download_url</code> key &mdash; instead it has a <code>value</code> key showing the percentage processed so far:</p>
 <pre><code>{
   "status": "in-progress",
   "upload_id": "73179df7-c0a2-492a-8dbc-a925c07d9a24",
@@ -940,7 +944,7 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
 </thead><tbody>
 <tr><td><code>status</code></td><td>Current processing state of this file within the batch: <code>completed</code> or <code>in-progress</code>.</td></tr>
 <tr><td><code>upload_id</code></td><td>Identifies which file in the batch this entry refers to &mdash; matches the <code>upload_id</code> returned for that file in <a href="#auto-tag-batch-api">3.4 Auto tag batch API</a>.</td></tr>
-<tr><td><code>file</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for this file's tagged output. Expires within 15 minutes.</td></tr>
+<tr><td><code>download_url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for this file's tagged output. Expires within 60 minutes.</td></tr>
 <tr><td><code>value</code></td><td>Only present when <code>status</code> is <code>in-progress</code>. Percentage of this file processed so far (e.g. <code>"4%"</code>).</td></tr>
 <tr><td><code>batch_id</code></td><td>Identifier shared by every file in the same batch &mdash; the same value you posted to this endpoint.</td></tr>
 </tbody></table>
@@ -960,19 +964,19 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"51debdae-88a8-4138-a954-42c7f1dd7ff2"</span><span class="p">,</span>
-    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample1.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
+    <span class="nl">"download_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample1.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"95199cf7-94a1-4b8b-b1c3-6aa545cef694"</span><span class="p">,</span>
-    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample2.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
+    <span class="nl">"download_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample2.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"completed"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"8f8b4b28-bd74-4009-97cf-e4ba6d047339"</span><span class="p">,</span>
-    <span class="nl">"file"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample3.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
+    <span class="nl">"download_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample3.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
   <span class="p">},</span>
   <span class="p">{</span>
