@@ -706,13 +706,13 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <div class="text-col">
     <h2 id="auto-tag-file-status-api">3.3 Auto tag file status API</h2>
 <h3>3.3.1 Fetch processing status</h3>
-<blockquote><p>POST the <code>uploadId</code> to get the status and download URL of the auto-tagged file.</p></blockquote>
+<blockquote><p>POST the <code>upload_id</code> to get the status and download URL of the auto-tagged file.</p></blockquote>
 <p><strong>Endpoint:</strong> <code>POST /v3/process/ping/</code></p>
 <h3>Payload</h3>
 <table><thead>
 <tr><th>Key</th><th>Value type</th></tr>
 </thead><tbody>
-<tr><td>uploadId</td><td>String (alphanumeric) or integer<br>e.g. <code>80193b9e-b456-4d68-b99b-0cd5360655fa</code></td></tr>
+<tr><td>upload_id</td><td>String (alphanumeric) or integer<br>e.g. <code>80193b9e-b456-4d68-b99b-0cd5360655fa</code></td></tr>
 </tbody></table>
 <h3>Response</h3>
 <table><thead>
@@ -720,7 +720,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 </thead><tbody>
 <tr><td><code>status</code></td><td>Current processing state of the file: <code>in-progress</code>, <code>completed</code>, or <code>failed</code>.</td></tr>
 <tr><td><code>value</code></td><td>Only present when <code>status</code> is <code>in-progress</code>. Percentage of the document processed so far (e.g. <code>"35%"</code>).</td></tr>
-<tr><td><code>download_url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for the tagged file. Expires within 60 minutes.</td></tr>
+<tr><td><code>download_url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for the tagged file. Expires within 60 minutes &mdash; if it expires, call this same endpoint again with the same <code>upload_id</code> to get a fresh <code>download_url</code>.</td></tr>
 <tr><td><code>error</code></td><td>Only present when <code>status</code> is <code>failed</code>. Human-readable description of what went wrong.</td></tr>
 </tbody></table>
 <table><thead>
@@ -738,7 +738,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 
 <span class="n">url</span> <span class="o">=</span> <span class="s">"https://ingprfl.continualengine.com/v3/process/ping/"</span>
 
-<span class="n">payload</span> <span class="o">=</span> <span class="s">"{\"uploadId\": 157303yTsd2}"</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="s">"{\"upload_id\": 157303yTsd2}"</span>
 
 <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
   <span class="s">'api-id'</span><span class="p">:</span> <span class="s">'prepuser_sample_id'</span><span class="p">,</span>
@@ -756,7 +756,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <span class="nt">--header</span> <span class="s1">'api-id: prepuser_sample_id'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'app-key: ER31DE423hRlp37Dn8sD'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'tenant: portal.prep'</span> <span class="se">\</span>
-<span class="nt">--data</span> <span class="s1">'{"uploadId": "80193b9e-b456-4d68-b99b-0cd5360655fa"}'</span></code></pre>
+<span class="nt">--data</span> <span class="s1">'{"upload_id": "80193b9e-b456-4d68-b99b-0cd5360655fa"}'</span></code></pre>
 </div><h3 class="col-label">Response</h3><div class="code-block lang-json  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="c1">// in progress &mdash; 200</span>
@@ -915,13 +915,13 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
   <div class="text-col">
     <h2 id="auto-tag-batch-status-api">3.5 Auto tag batch status API</h2>
 <h3>3.5.1 Batch processing status</h3>
-<blockquote><p>POST the <code>batchId</code> from the batch upload response to check the status of every file in that batch.</p></blockquote>
+<blockquote><p>POST the <code>batch_id</code> from the batch upload response to check the status of every file in that batch.</p></blockquote>
 <p><strong>Endpoint:</strong> <code>POST /v3/batch/ping/</code></p>
 <h3>Payload of batch status</h3>
 <table><thead>
 <tr><th>Key</th><th>Value type</th></tr>
 </thead><tbody>
-<tr><td>batchId</td><td>String &mdash; the <code>batch_id</code> returned from the batch upload call</td></tr>
+<tr><td>batch_id</td><td>String &mdash; the <code>batch_id</code> returned from the batch upload call</td></tr>
 </tbody></table>
 <h3>Response of batch status</h3>
 <p>The batch status API returns an array of objects, one per file. If a file's status is <code>completed</code>, its object includes a <code>download_url</code> key with the download URL:</p>
@@ -944,7 +944,7 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
 </thead><tbody>
 <tr><td><code>status</code></td><td>Current processing state of this file within the batch: <code>completed</code> or <code>in-progress</code>.</td></tr>
 <tr><td><code>upload_id</code></td><td>Identifies which file in the batch this entry refers to &mdash; matches the <code>upload_id</code> returned for that file in <a href="#auto-tag-batch-api">3.4 Auto tag batch API</a>.</td></tr>
-<tr><td><code>download_url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for this file's tagged output. Expires within 60 minutes.</td></tr>
+<tr><td><code>download_url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for this file's tagged output. Expires within 60 minutes &mdash; if it expires, call this same endpoint again with the same <code>batch_id</code> to get a fresh <code>download_url</code>.</td></tr>
 <tr><td><code>value</code></td><td>Only present when <code>status</code> is <code>in-progress</code>. Percentage of this file processed so far (e.g. <code>"4%"</code>).</td></tr>
 <tr><td><code>batch_id</code></td><td>Identifier shared by every file in the same batch &mdash; the same value you posted to this endpoint.</td></tr>
 </tbody></table>
@@ -956,7 +956,7 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
 <span class="nt">--header</span> <span class="s1">'app-key: ER31DE423hRlp37Dn8sD'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'tenant: portal.prep'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
-<span class="nt">--data</span> <span class="s1">'{"batchId": "96430b40-92d3-4d60-90dd-535a49fbce8d"}'</span></code></pre>
+<span class="nt">--data</span> <span class="s1">'{"batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d"}'</span></code></pre>
 </div><h3 class="col-label">Response</h3><div class="code-block lang-json  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="c1">// 201</span>
@@ -1099,6 +1099,14 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
   <div class="text-col">
     <h1 id="rate-limits">6. Rate Limits</h1>
 <p>Upload and Rate limits are determined by your subscription plan and SLA.</p>
+<table><thead>
+<tr><th>Limit</th><th>Value</th></tr>
+</thead><tbody>
+<tr><td>Maximum file size</td><td>As per SOW/SLA</td></tr>
+<tr><td>Maximum page count</td><td>As per SOW/SLA</td></tr>
+<tr><td>Batch size limits</td><td>As per SOW/SLA</td></tr>
+<tr><td>Rate limits (requests per time window, e.g. requests/minute)</td><td>As per SOW/SLA</td></tr>
+</tbody></table>
   </div>
   <div class="code-col"></div>
 </section>
