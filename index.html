@@ -697,7 +697,6 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <div class="code-col"><div class="section-heading">3.2 Upload file</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> <span class="nt">PUT</span> <span class="s1">'https://static-storage-ac21-bucket.s3.amazonaws.com/media/files/sources/20260727125614684788_b9eb569b-d790-436e-8238-b4619125485d_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFLL%2F20260727%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260727T125614Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=8185754b78cec95a5f17766237c14333d8ee0dd886f209d4c0d6935608f141dd'</span> <span class="se">\</span>
-<span class="nt">--header</span> <span class="s1">'tenant: portal.prep'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'Content-Type: application/pdf'</span> <span class="se">\</span>
 <span class="nt">--data-binary</span> <span class="s1">'path-to-file/sample.pdf'</span></code></pre>
 </div></div>
@@ -728,7 +727,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 </thead><tbody>
 <tr><td>In Progress</td><td><code>{"status": "in-progress", "value": "35%"}</code></td><td>200</td></tr>
 <tr><td>Completed</td><td><code>{"status": "completed", "download_url": "https://static-storage-v3-continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"}</code></td><td>200</td></tr>
-<tr><td>Failed</td><td><code>{"status": "failed", "error": "The file is corrupt."}</code></td><td>417</td></tr>
+<tr><td>Failed</td><td><code>{"status": "failed", "error": "The file is corrupt."}</code></td><td>422</td></tr>
 </tbody></table>
   </div>
   <div class="code-col"><div class="section-heading">3.3 Auto tag file status API</div><h3 class="col-label">Request</h3><div class="code-block lang-python">
@@ -768,7 +767,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <span class="nl">"download_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"</span>
 <span class="p">}</span>
 
-<span class="c1">// failed &mdash; 417</span>
+<span class="c1">// failed &mdash; 422</span>
 <span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"The file is corrupt."</span> <span class="p">}</span></code></pre>
 </div><figure class="result-image">
   <!-- <img src="./PREP_Auto_Tag_API_documentation_files/ping-status-postman.png" alt="Fetch processing status &amp;mdash; Postman example"> -->
@@ -1014,8 +1013,8 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
 <tr><td>Unauthorized</td><td>Not authenticated &mdash; missing, invalid, or expired <code>api-id</code> / <code>app-key</code> credentials.</td><td>401</td></tr>
 <tr><td>Forbidden</td><td>Authenticated but not allowed to perform this action.</td><td>403</td></tr>
 <tr><td>Not Found</td><td>The resource being requested (e.g. an <code>upload_id</code> or <code>batch_id</code>) doesn't exist.</td><td>404</td></tr>
+<tr><td>Unprocessable Entity</td><td>The uploaded file could not be processed &mdash; e.g. the file is corrupt or unreadable.</td><td>422</td></tr>
 <tr><td>Too Many Requests</td><td>Client exceeded the rate limit or quota for their account (see <a href="#rate-limits">6. Rate Limits</a>).</td><td>429</td></tr>
-<tr><td>Expectation Failed</td><td>The uploaded file could not be processed &mdash; e.g. the file is corrupt or unreadable.</td><td>417</td></tr>
 <tr><td>Internal Server Error</td><td>Something genuinely broke on PREP's side, with no clearer category &mdash; meant for unexpected server bugs.</td><td>500</td></tr>
 </tbody></table>
   </div>
@@ -1033,11 +1032,11 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
 <span class="c1">// Not Found &mdash; 404</span>
 <span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"Resource not found"</span> <span class="p">}</span>
 
+<span class="c1">// Unprocessable Entity &mdash; 422</span>
+<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"The file is corrupt."</span> <span class="p">}</span>
+
 <span class="c1">// Too Many Requests &mdash; 429</span>
 <span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"Either out of resource quota or reaching rate limiting"</span> <span class="p">}</span>
-
-<span class="c1">// Expectation Failed &mdash; 417</span>
-<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"The file is corrupt."</span> <span class="p">}</span>
 
 <span class="c1">// Internal Server Error &mdash; 500</span>
 <span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"Internal error."</span> <span class="p">}</span></code></pre>
@@ -1050,6 +1049,7 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
 <blockquote><p>Returns the templates that are available for the user.</p></blockquote>
 <p><strong>Endpoint:</strong> <code>GET /v3/accounts/templates/</code></p>
 <h3>Response</h3>
+<p>Response is a list (array) of template objects, one per available template. Each object has the keys below:</p>
 <table><thead>
 <tr><th>Key</th><th>Description</th></tr>
 </thead><tbody>
@@ -1059,8 +1059,8 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
 <table><thead>
 <tr><th>Response JSON</th><th>Status code</th></tr>
 </thead><tbody>
-<tr><td><code>{"id": 323, "name": "factsheet"}</code></td><td>200</td></tr>
-<tr><td><code>{"status": "failed", "error": "The file is corrupt."}</code></td><td>417</td></tr>
+<tr><td><code>[{"id": 323, "name": "factsheet"}, {"id": 324, "name": "invoice_template"}]</code></td><td>200</td></tr>
+<tr><td><code>{"status": "failed", "error": "No templates found."}</code></td><td>404</td></tr>
 </tbody></table>
   </div>
   <div class="code-col"><div class="section-heading">5. Templates API</div><h3 class="col-label">Request</h3><div class="code-block lang-python">
@@ -1089,10 +1089,13 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
 </div><h3 class="col-label">Response</h3><div class="code-block lang-json  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="c1">// 200</span>
-<span class="p">{</span> <span class="nl">"id"</span><span class="p">:</span> <span class="mi">323</span><span class="p">,</span> <span class="nl">"name"</span><span class="p">:</span> <span class="s2">"factsheet"</span> <span class="p">}</span>
+<span class="p">[</span>
+  <span class="p">{</span> <span class="nl">"id"</span><span class="p">:</span> <span class="mi">323</span><span class="p">,</span> <span class="nl">"name"</span><span class="p">:</span> <span class="s2">"factsheet"</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="nl">"id"</span><span class="p">:</span> <span class="mi">324</span><span class="p">,</span> <span class="nl">"name"</span><span class="p">:</span> <span class="s2">"invoice_template"</span> <span class="p">}</span>
+<span class="p">]</span>
 
-<span class="c1">// 417</span>
-<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"The file is corrupt."</span> <span class="p">}</span></code></pre>
+<span class="c1">// 404 &mdash; no templates found</span>
+<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"No templates found."</span> <span class="p">}</span></code></pre>
 </div></div>
 </section>
 <section class="doc-section" id="rate-limits">
