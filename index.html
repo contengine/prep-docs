@@ -717,15 +717,14 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <table><thead>
 <tr><th>Key</th><th>Description</th></tr>
 </thead><tbody>
-<tr><td><code>status</code></td><td>Current processing state of the file: <code>in-progress</code>, <code>completed</code>, or <code>failed</code>.</td></tr>
-<tr><td><code>value</code></td><td>Only present when <code>status</code> is <code>in-progress</code>. Percentage of the document processed so far (e.g. <code>"35%"</code>).</td></tr>
+<tr><td><code>status</code></td><td>Current processing state of the file: <code>queued</code>, <code>in-progress</code>, <code>completed</code>, or <code>failed</code>.</td></tr>
 <tr><td><code>download_url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for the tagged file. Expires within 60 minutes &mdash; if it expires, call this same endpoint again with the same <code>upload_id</code> to get a fresh <code>download_url</code>.</td></tr>
 <tr><td><code>error</code></td><td>Only present when <code>status</code> is <code>failed</code>. Human-readable description of what went wrong.</td></tr>
 </tbody></table>
 <table><thead>
 <tr><th>Status of autotag</th><th>Response JSON</th><th>Status code</th></tr>
 </thead><tbody>
-<tr><td>In Progress</td><td><code>{"status": "in-progress", "value": "35%"}</code></td><td>200</td></tr>
+<tr><td>In Progress</td><td><code>{"status": "in-progress"}</code></td><td>200</td></tr>
 <tr><td>Completed</td><td><code>{"status": "completed", "download_url": "https://static-storage-v3-continualengine.com/media/tagged/sample.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem"}</code></td><td>200</td></tr>
 <tr><td>Failed</td><td><code>{"status": "failed", "error": "The file is corrupt."}</code></td><td>422</td></tr>
 </tbody></table>
@@ -759,7 +758,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 </div><h3 class="col-label">Response</h3><div class="code-block lang-json  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="c1">// in progress &mdash; 200</span>
-<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"in-progress"</span><span class="p">,</span> <span class="nl">"value"</span><span class="p">:</span> <span class="s2">"35%"</span> <span class="p">}</span>
+<span class="p">{</span> <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"in-progress"</span> <span class="p">}</span>
 
 <span class="c1">// completed &mdash; 200</span>
 <span class="p">{</span>
@@ -930,11 +929,10 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
   "download_url": "https://static-storage-v3-continualengine.com/media/tagged/sample1.pdf?sign=20dppoi2nd29y4-d2bom11lo9aslciem",
   "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d"
 }</code></pre>
-<p>If the file is still <code>in-progress</code>, it won't have a <code>download_url</code> key &mdash; instead it has a <code>value</code> key showing the percentage processed so far:</p>
+<p>If the file is still <code>in-progress</code>, it won't have a <code>download_url</code> key:</p>
 <pre><code>{
   "status": "in-progress",
   "upload_id": "73179df7-c0a2-492a-8dbc-a925c07d9a24",
-  "value": "4%",
   "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d"
 }</code></pre>
 <p>Each file's <code>upload_id</code> is unique and can also be used to check that single file's status individually, as described in <a href="#auto-tag-file-status-api">3.3 Auto tag file status API</a>.</p>
@@ -944,7 +942,6 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
 <tr><td><code>status</code></td><td>Current processing state of this file within the batch: <code>completed</code> or <code>in-progress</code>.</td></tr>
 <tr><td><code>upload_id</code></td><td>Identifies which file in the batch this entry refers to &mdash; matches the <code>upload_id</code> returned for that file in <a href="#auto-tag-batch-api">3.4 Auto tag batch API</a>.</td></tr>
 <tr><td><code>download_url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for this file's tagged output. Expires within 60 minutes &mdash; if it expires, call this same endpoint again with the same <code>batch_id</code> to get a fresh <code>download_url</code>.</td></tr>
-<tr><td><code>value</code></td><td>Only present when <code>status</code> is <code>in-progress</code>. Percentage of this file processed so far (e.g. <code>"4%"</code>).</td></tr>
 <tr><td><code>batch_id</code></td><td>Identifier shared by every file in the same batch &mdash; the same value you posted to this endpoint.</td></tr>
 </tbody></table>
   </div>
@@ -981,13 +978,11 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"in-progress"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"657db789-953c-4828-865c-ef0ef43b97a1"</span><span class="p">,</span>
-    <span class="nl">"value"</span><span class="p">:</span> <span class="s2">"35%"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"in-progress"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"73179df7-c0a2-492a-8dbc-a925c07d9a24"</span><span class="p">,</span>
-    <span class="nl">"value"</span><span class="p">:</span> <span class="s2">"4%"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span>
   <span class="p">}</span>
 <span class="p">]</span></code></pre>
