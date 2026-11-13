@@ -618,7 +618,7 @@ Check the status of the auto-tagging job. Once processing is complete, the respo
 <table><thead>
 <tr><th>Key</th><th>Description</th></tr>
 </thead><tbody>
-<tr><td><code>status</code></td><td>Indicates whether the request was accepted: <code>"success"</code> (201) or <code>"failed"</code> (429).</td></tr>
+<tr><td><code>status</code></td><td>Indicates whether the request was accepted: <code>"success"</code> (201) or <code>"failed"</code> (429 or 500).</td></tr>
 <tr><td><code>upload_id</code></td><td>Unique identifier (UUID) for this upload. Use it to poll processing status via <a href="#auto-tag-file-status-api">3.3 Auto tag file status API</a>.</td></tr>
 <tr><td><code>file_name</code></td><td>The name of the file that was submitted for auto-tagging.</td></tr>
 <tr><td><code>upload_url</code></td><td>Signed URL to <code>PUT</code> the file to, in order to begin processing (see <a href="#upload-file">3.2 Upload file</a>). Expires within 8 minutes.</td></tr>
