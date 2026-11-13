@@ -562,27 +562,23 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
     <input type="text" placeholder="Search" oninput="filterNav(this.value)">
   </div>
   <nav id="toc">
-    <ul id="toc-list"><li class="toc-h1"><a href="#introduction-and-overview" class="toc-link" data-target="introduction-and-overview">1. Introduction and Overview</a></li><li class="toc-h1"><a href="#api-idkey-setup" class="toc-link" data-target="api-idkey-setup">2. API ID/KEY setup</a></li><li class="toc-h1"><a href="#api-specs" class="toc-link" data-target="api-specs">3. API Specs</a><ul class="toc-list-h2"><li class="toc-h2"><a href="#auto-tag-api" class="toc-link" data-target="auto-tag-api">3.1 Auto tag API</a></li><li class="toc-h2"><a href="#upload-file" class="toc-link" data-target="upload-file">3.2 Upload file</a></li><li class="toc-h2"><a href="#auto-tag-file-status-api" class="toc-link" data-target="auto-tag-file-status-api">3.3 Auto tag file status API</a></li><li class="toc-h2"><a href="#auto-tag-batch-api" class="toc-link" data-target="auto-tag-batch-api">3.4 Auto tag batch API</a></li><li class="toc-h2"><a href="#auto-tag-batch-status-api" class="toc-link" data-target="auto-tag-batch-status-api">3.5 Auto tag batch status API</a></li></ul></li><li class="toc-h1"><a href="#error-codes" class="toc-link" data-target="error-codes">4. Error Codes</a></li><li class="toc-h1"><a href="#templates-api" class="toc-link" data-target="templates-api">5. Templates API</a></li><li class="toc-h1"><a href="#rate-limits" class="toc-link" data-target="rate-limits">6. Rate Limits</a></li><li class="toc-h1"><a href="#libraries-dependencies" class="toc-link" data-target="libraries-dependencies">7. Libraries (Dependencies)</a></li><li class="toc-h1"><a href="#versioning-updates" class="toc-link" data-target="versioning-updates">8. Versioning & updates</a></li><li class="toc-h1"><a href="#support" class="toc-link" data-target="support">9. Support</a></li></ul>
+    <ul id="toc-list"><li class="toc-h1"><a href="#introduction-and-overview" class="toc-link" data-target="introduction-and-overview">1. Auto-tagging a PDF</a></li><li class="toc-h1"><a href="#api-idkey-setup" class="toc-link" data-target="api-idkey-setup">2. API ID/KEY setup</a></li><li class="toc-h1"><a href="#api-specs" class="toc-link" data-target="api-specs">3. API Specs</a><ul class="toc-list-h2"><li class="toc-h2"><a href="#auto-tag-api" class="toc-link" data-target="auto-tag-api">3.1 Auto tag API</a></li><li class="toc-h2"><a href="#upload-file" class="toc-link" data-target="upload-file">3.2 Upload file</a></li><li class="toc-h2"><a href="#auto-tag-file-status-api" class="toc-link" data-target="auto-tag-file-status-api">3.3 Auto tag file status API</a></li><li class="toc-h2"><a href="#auto-tag-batch-api" class="toc-link" data-target="auto-tag-batch-api">3.4 Auto tag batch API</a></li><li class="toc-h2"><a href="#auto-tag-batch-status-api" class="toc-link" data-target="auto-tag-batch-status-api">3.5 Auto tag batch status API</a></li></ul></li><li class="toc-h1"><a href="#error-codes" class="toc-link" data-target="error-codes">4. Error Codes</a></li><li class="toc-h1"><a href="#templates-api" class="toc-link" data-target="templates-api">5. Templates API</a></li><li class="toc-h1"><a href="#rate-limits" class="toc-link" data-target="rate-limits">6. Rate Limits</a></li><li class="toc-h1"><a href="#libraries-dependencies" class="toc-link" data-target="libraries-dependencies">7. Libraries (Dependencies)</a></li><li class="toc-h1"><a href="#versioning-updates" class="toc-link" data-target="versioning-updates">8. Versioning & updates</a></li><li class="toc-h1"><a href="#support" class="toc-link" data-target="support">9. Support</a></li></ul>
   </nav>
 </div>
 
 <main class="main">
 <section class="doc-section" id="introduction-and-overview">
   <div class="text-col">
-    <h1 id="introduction-and-overview">1. Introduction and Overview</h1>
-<p>This document explains the specifications of the Auto Tag API in PREP.</p>
-<p>Auto-tagging a PDF document is a three-step process:</p>
-<ul>
-<li>Request an upload URL (Initiate upload for Auto Tag)</li>
-<li>Upload the file for auto-tagging</li>
-<li>Poll for processing status</li>
-</ul>
-<p>The Auto-tag API exposes three RESTful endpoints:</p>
-<ul>
-<li><strong>POST v3/process/init-auto-tag/</strong> &mdash; Starts the auto-tagging workflow for a PDF file. This call kicks off the auto-tagging process and returns a unique, signed URL that the file will be uploaded to in the next step.</li>
-<li><strong>PUT</strong> <code>https://static-storage-v3-continualengine.com/&hellip;/signed_url/</code> &mdash; Uploads the file to Static Storage. PUT the file directly to the signed URL returned above.</li>
-<li><strong>POST process/ping/</strong> &mdash; Checks the status of the auto-tagging job and returns the download link once ready.</li>
-</ul>
+    <h1 id="introduction-and-overview">1. Auto-tagging a PDF</h1>
+<p>Auto-tagging a PDF is a three-step process, with one API call for each step:</p>
+<ol>
+<li><strong>Initiate the upload:</strong> <code>POST v3/process/init-auto-tag/</code><br>
+Initiates the auto-tagging workflow for a PDF file and returns a unique, signed URL for uploading the file.</li>
+<li><strong>Upload the file:</strong> <code>PUT https://static-storage-v3-continualengine.com/&hellip;/signed_url/</code><br>
+Upload the PDF directly to the signed URL returned in step 1.</li>
+<li><strong>Poll for status:</strong> <code>POST process/ping/</code><br>
+Check the status of the auto-tagging job. Once processing is complete, the response includes the download link for the tagged file.</li>
+</ol>
   </div>
   <div class="code-col"></div>
 </section>
@@ -625,7 +621,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <tr><td><code>status</code></td><td>Indicates whether the request was accepted. Always <code>"success"</code> for a 201 response.</td></tr>
 <tr><td><code>upload_id</code></td><td>Unique identifier (UUID) for this upload. Use it to poll processing status via <a href="#auto-tag-file-status-api">3.3 Auto tag file status API</a>.</td></tr>
 <tr><td><code>file_name</code></td><td>The name of the file that was submitted for auto-tagging.</td></tr>
-<tr><td><code>upload_url</code></td><td>Signed URL to <code>PUT</code> the file to, in order to begin processing (see <a href="#upload-file">3.2 Upload file</a>). Expires within 15 minutes.</td></tr>
+<tr><td><code>upload_url</code></td><td>Signed URL to <code>PUT</code> the file to, in order to begin processing (see <a href="#upload-file">3.2 Upload file</a>). Expires within 8 minutes.</td></tr>
 </tbody></table>
 <table><thead>
 <tr><th>Response JSON</th><th>Status code</th></tr>
@@ -634,7 +630,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
   <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"80193b9e-b456-4d68-b99b-0cd5360655fa"</span><span class="p">,</span>
   <span class="nl">"file_name"</span><span class="p">:</span> <span class="s2">"sample.pdf"</span><span class="p">,</span>
-  <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+  <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
 <span class="p">}</span></code></pre></td><td>201</td></tr>
 </tbody></table>
 <p>If the <code>upload_url</code> expires before you use it, simply call this endpoint again to generate a new one.</p>
@@ -670,7 +666,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
   <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"80193b9e-b456-4d68-b99b-0cd5360655fa"</span><span class="p">,</span>
   <span class="nl">"file_name"</span><span class="p">:</span> <span class="s2">"sample.pdf"</span><span class="p">,</span>
-  <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+  <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
 <span class="p">}</span></code></pre>
 </div><figure class="result-image">
   <!-- <img src="./PREP_Auto_Tag_API_documentation_files/init-auto-tag-postman.png" alt="Initiate upload &amp;mdash; Postman example"> -->
@@ -696,9 +692,8 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   </div>
   <div class="code-col"><div class="section-heading">3.2 Upload file</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  <pre class="highlight"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> <span class="nt">PUT</span> <span class="s1">'https://static-storage-ac21-bucket.s3.amazonaws.com/media/files/sources/20260727125614684788_b9eb569b-d790-436e-8238-b4619125485d_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFLL%2F20260727%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260727T125614Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=8185754b78cec95a5f17766237c14333d8ee0dd886f209d4c0d6935608f141dd'</span> <span class="se">\</span>
-<span class="nt">--header</span> <span class="s1">'Content-Type: application/pdf'</span> <span class="se">\</span>
-<span class="nt">--data-binary</span> <span class="s1">'path-to-file/sample.pdf'</span></code></pre>
+  <pre class="highlight"><code>curl <span class="nt">-s</span> <span class="nt">-X</span> <span class="nt">PUT</span> <span class="s2">"https://static-storage-ac21-bucket.s3.amazonaws.com/media/files/sources/20260727125614684788_b9eb569b-d790-436e-8238-b4619125485d_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFLL%2F20260727%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260727T125614Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=8185754b78cec95a5f17766237c14333d8ee0dd886f209d4c0d6935608f141dd"</span> <span class="se">\</span>
+<span class="nt">--upload-file</span> path-to-file</code></pre>
 </div></div>
 </section>
 <section class="doc-section" id="auto-tag-file-status-api">
@@ -718,7 +713,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <tr><th>Key</th><th>Description</th></tr>
 </thead><tbody>
 <tr><td><code>status</code></td><td>Current processing state of the file: <code>queued</code>, <code>in-progress</code>, <code>completed</code>, or <code>failed</code>.</td></tr>
-<tr><td><code>download_url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for the tagged file. Expires within 60 minutes &mdash; if it expires, call this same endpoint again with the same <code>upload_id</code> to get a fresh <code>download_url</code>.</td></tr>
+<tr><td><code>download_url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for the tagged file. Expires within 8 minutes &mdash; if it expires, call this same endpoint again with the same <code>upload_id</code> to get a fresh <code>download_url</code>.</td></tr>
 <tr><td><code>error</code></td><td>Only present when <code>status</code> is <code>failed</code>. Human-readable description of what went wrong.</td></tr>
 </tbody></table>
 <table><thead>
@@ -795,7 +790,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   "upload_id": "51debdae-88a8-4138-a954-42c7f1dd7ff2",
   "file_name": "sample1.pdf",
   "batch_id": "96430b40-92d3-4d60-90dd-535a49fbce8d",
-  "upload_url": "https://static-storage-v3-continualengine.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"
+  "upload_url": "https://static-storage-v3-continualengine.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"
 }</code></pre>
 <table><thead>
 <tr><th>Key</th><th>Description</th></tr>
@@ -804,7 +799,7 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
 <tr><td><code>upload_id</code></td><td>Unique identifier (UUID) for this file within the batch. Use it with <a href="#auto-tag-file-status-api">3.3 Auto tag file status API</a> to check this one file's status individually.</td></tr>
 <tr><td><code>file_name</code></td><td>The name of this file as submitted in the batch payload.</td></tr>
 <tr><td><code>batch_id</code></td><td>Identifier shared by every file in this batch. Use it with <a href="#auto-tag-batch-status-api">3.5 Auto tag batch status API</a> to poll the whole batch's status at once.</td></tr>
-<tr><td><code>upload_url</code></td><td>Signed URL to <code>PUT</code> this specific file to, in order to begin processing (see <a href="#upload-file">3.2 Upload file</a>). Expires within 15 minutes. Each file in the batch gets its own <code>upload_url</code>.</td></tr>
+<tr><td><code>upload_url</code></td><td>Signed URL to <code>PUT</code> this specific file to, in order to begin processing (see <a href="#upload-file">3.2 Upload file</a>). Expires within 8 minutes. Each file in the batch gets its own <code>upload_url</code>.</td></tr>
 </tbody></table>
 <table><thead>
 <tr><th>Response JSON</th><th>Status code</th></tr>
@@ -815,14 +810,14 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"51debdae-88a8-4138-a954-42c7f1dd7ff2"</span><span class="p">,</span>
     <span class="nl">"file_name"</span><span class="p">:</span> <span class="s2">"sample1.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"95199cf7-94a1-4b8b-b1c3-6aa545cef694"</span><span class="p">,</span>
     <span class="nl">"file_name"</span><span class="p">:</span> <span class="s2">"sample2.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/95199cf7-94a1-4b8b-b1c3-6aa545cef694_sample2.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/95199cf7-94a1-4b8b-b1c3-6aa545cef694_sample2.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">},</span>
   <span class="c1">........,</span>
   <span class="c1">........,</span>
@@ -853,35 +848,35 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"51debdae-88a8-4138-a954-42c7f1dd7ff2"</span><span class="p">,</span>
     <span class="nl">"file_name"</span><span class="p">:</span> <span class="s2">"sample1.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/51debdae-88a8-4138-a954-42c7f1dd7ff2_sample1.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"95199cf7-94a1-4b8b-b1c3-6aa545cef694"</span><span class="p">,</span>
     <span class="nl">"file_name"</span><span class="p">:</span> <span class="s2">"sample2.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/95199cf7-94a1-4b8b-b1c3-6aa545cef694_sample2.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/95199cf7-94a1-4b8b-b1c3-6aa545cef694_sample2.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"8f8b4b28-bd74-4009-97cf-e4ba6d047339"</span><span class="p">,</span>
     <span class="nl">"file_name"</span><span class="p">:</span> <span class="s2">"sample3.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/8f8b4b28-bd74-4009-97cf-e4ba6d047339_sample3.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/8f8b4b28-bd74-4009-97cf-e4ba6d047339_sample3.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"657db789-953c-4828-865c-ef0ef43b97a1"</span><span class="p">,</span>
     <span class="nl">"file_name"</span><span class="p">:</span> <span class="s2">"sample4.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/657db789-953c-4828-865c-ef0ef43b97a1_sample4.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/657db789-953c-4828-865c-ef0ef43b97a1_sample4.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">},</span>
   <span class="p">{</span>
     <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
     <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"73179df7-c0a2-492a-8dbc-a925c07d9a24"</span><span class="p">,</span>
     <span class="nl">"file_name"</span><span class="p">:</span> <span class="s2">"sample5.pdf"</span><span class="p">,</span>
     <span class="nl">"batch_id"</span><span class="p">:</span> <span class="s2">"96430b40-92d3-4d60-90dd-535a49fbce8d"</span><span class="p">,</span>
-    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/73179df7-c0a2-492a-8dbc-a925c07d9a24_sample5.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=900&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+    <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/73179df7-c0a2-492a-8dbc-a925c07d9a24_sample5.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
   <span class="p">}</span>
 <span class="p">]</span></code></pre>
 </div><figure class="result-image">
@@ -901,10 +896,8 @@ nav#toc li.has-active > ul.toc-list-h2 { display: block; }
   <div class="code-col"><div class="section-heading">3.4.2 Upload files to process (batch)</div><h3 class="col-label">Request</h3><div class="code-block lang-shell active  always">
   <button class="copy-btn" onclick="copyCode(this)">Copy</button>
   <pre class="highlight"><code><span class="c1"># repeat once per file, using that file's own upload_url</span>
-curl <span class="nt">--location</span> <span class="nt">--request</span> <span class="nt">PUT</span> <span class="s1">'&lt;upload_url for sample1.pdf&gt;'</span> <span class="se">\</span>
-<span class="nt">--header</span> <span class="s1">'tenant: portal.prep'</span> <span class="se">\</span>
-<span class="nt">--header</span> <span class="s1">'Content-Type: application/pdf'</span> <span class="se">\</span>
-<span class="nt">--data-binary</span> <span class="s1">'path-to-file/sample1.pdf'</span>
+curl <span class="nt">-s</span> <span class="nt">-X</span> <span class="nt">PUT</span> <span class="s2">"&lt;upload_url for sample1.pdf&gt;"</span> <span class="se">\</span>
+<span class="nt">--upload-file</span> path-to-file/sample1.pdf
 
 <span class="c1"># then again for sample2.pdf, sample3.pdf, ... using each one's own upload_url</span></code></pre>
 </div></div>
@@ -941,7 +934,7 @@ curl <span class="nt">--location</span> <span class="nt">--request</span> <span 
 </thead><tbody>
 <tr><td><code>status</code></td><td>Current processing state of this file within the batch: <code>completed</code> or <code>in-progress</code>.</td></tr>
 <tr><td><code>upload_id</code></td><td>Identifies which file in the batch this entry refers to &mdash; matches the <code>upload_id</code> returned for that file in <a href="#auto-tag-batch-api">3.4 Auto tag batch API</a>.</td></tr>
-<tr><td><code>download_url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for this file's tagged output. Expires within 60 minutes &mdash; if it expires, call this same endpoint again with the same <code>batch_id</code> to get a fresh <code>download_url</code>.</td></tr>
+<tr><td><code>download_url</code></td><td>Only present when <code>status</code> is <code>completed</code>. Signed download link for this file's tagged output. Expires within 8 minutes &mdash; if it expires, call this same endpoint again with the same <code>batch_id</code> to get a fresh <code>download_url</code>.</td></tr>
 <tr><td><code>batch_id</code></td><td>Identifier shared by every file in the same batch &mdash; the same value you posted to this endpoint.</td></tr>
 </tbody></table>
   </div>
