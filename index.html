@@ -618,20 +618,22 @@ Check the status of the auto-tagging job. Once processing is complete, the respo
 <table><thead>
 <tr><th>Key</th><th>Description</th></tr>
 </thead><tbody>
-<tr><td><code>status</code></td><td>Indicates whether the request was accepted. Always <code>"success"</code> for a 201 response.</td></tr>
+<tr><td><code>status</code></td><td>Indicates whether the request was accepted: <code>"success"</code> (201) or <code>"failed"</code> (429).</td></tr>
 <tr><td><code>upload_id</code></td><td>Unique identifier (UUID) for this upload. Use it to poll processing status via <a href="#auto-tag-file-status-api">3.3 Auto tag file status API</a>.</td></tr>
 <tr><td><code>file_name</code></td><td>The name of the file that was submitted for auto-tagging.</td></tr>
 <tr><td><code>upload_url</code></td><td>Signed URL to <code>PUT</code> the file to, in order to begin processing (see <a href="#upload-file">3.2 Upload file</a>). Expires within 8 minutes.</td></tr>
+<tr><td><code>error</code></td><td>Only present when <code>status</code> is <code>"failed"</code>. <code>"Rate limit exceeded. Retry in &lt;n&gt; seconds"</code>, where <code>&lt;n&gt;</code> is how many seconds to wait before calling this endpoint again.</td></tr>
 </tbody></table>
 <table><thead>
-<tr><th>Response JSON</th><th>Status code</th></tr>
+<tr><th>Status</th><th>Response JSON</th><th>Status code</th></tr>
 </thead><tbody>
-<tr><td><pre class="highlight"><code><span class="p">{</span>
+<tr><td>Success</td><td><pre class="highlight"><code><span class="p">{</span>
   <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
   <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"80193b9e-b456-4d68-b99b-0cd5360655fa"</span><span class="p">,</span>
   <span class="nl">"file_name"</span><span class="p">:</span> <span class="s2">"sample.pdf"</span><span class="p">,</span>
   <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
 <span class="p">}</span></code></pre></td><td>201</td></tr>
+<tr><td>Rate limit exceeded</td><td><code>{"status": "failed", "error": "Rate limit exceeded. Retry in 30 seconds"}</code></td><td>429</td></tr>
 </tbody></table>
 <p>If the <code>upload_url</code> expires before you use it, simply call this endpoint again to generate a new one.</p>
   </div>
@@ -667,6 +669,12 @@ Check the status of the auto-tagging job. Once processing is complete, the respo
   <span class="nl">"upload_id"</span><span class="p">:</span> <span class="s2">"80193b9e-b456-4d68-b99b-0cd5360655fa"</span><span class="p">,</span>
   <span class="nl">"file_name"</span><span class="p">:</span> <span class="s2">"sample.pdf"</span><span class="p">,</span>
   <span class="nl">"upload_url"</span><span class="p">:</span> <span class="s2">"https://static-storage-v3-continualengine.com/955ce07c-7612-4546-981c-e4a5ccdac7dd_samplepdf.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAYTAIYRIXPC6PHFTY%2F20260724%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260724T041500Z&amp;X-Amz-Expires=480&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0f7b6a9c12fb838f86077585091991373370d2200abadad2a141bc4dcc3bd321"</span>
+<span class="p">}</span>
+
+<span class="c1">// rate limit exceeded &mdash; 429</span>
+<span class="p">{</span>
+  <span class="nl">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span>
+  <span class="nl">"error"</span><span class="p">:</span> <span class="s2">"Rate limit exceeded. Retry in 30 seconds"</span>
 <span class="p">}</span></code></pre>
 </div><figure class="result-image">
   <!-- <img src="./PREP_Auto_Tag_API_documentation_files/init-auto-tag-postman.png" alt="Initiate upload &amp;mdash; Postman example"> -->
